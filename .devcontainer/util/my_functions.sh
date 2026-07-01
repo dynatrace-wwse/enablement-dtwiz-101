@@ -85,8 +85,31 @@ summonDynatrace(){
   printInfoSection "Summoning the Dynatrace Operator + ActiveGate (applicationMonitoring)"
   dynatraceDeployOperator
   deployApplicationMonitoring
-  printInfo "Restarting the Todo app so OneAgent can inject into it"
-  kubectl rollout restart deployment -n todoapp && kubectl rollout status deployment -n todoapp --timeout=120s
+
+  # Injection readiness lags the DynaKube apply: the mutating webhook must be
+  # Ready AND the operator must have configured injection before a pod restart
+  # will actually inject OneAgent. Restarting too early creates un-injected pods
+  # that are never restarted again. So: wait for the webhook, then restart and
+  # RETRY until the injection annotation appears (or give up after several tries).
+  printInfo "Waiting for the Dynatrace mutating webhook to be Ready"
+  kubectl -n dynatrace wait pod \
+    --for=condition=ready \
+    --selector=app.kubernetes.io/name=dynatrace-operator,app.kubernetes.io/component=webhook \
+    --timeout=180s 2>/dev/null || true
+
+  local i=0
+  while [ "$i" -lt 5 ]; do
+    printInfo "Restarting the Todo app so OneAgent can inject (attempt $((i + 1))/5)"
+    kubectl rollout restart deployment -n todoapp
+    kubectl rollout status deployment -n todoapp --timeout=120s
+    if isOneAgentInjected; then
+      printInfo "OneAgent injected into the Todo app"
+      return 0
+    fi
+    i=$((i + 1)); printInfo "not injected yet, waiting 20s before retrying restart"; sleep 20
+  done
+  printWarn "OneAgent injection not detected after retries"
+  return 1
 }
 
 # Dynatrace Operator pod Running.
