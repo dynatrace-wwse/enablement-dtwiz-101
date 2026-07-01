@@ -23,7 +23,7 @@ inject into it. This takes a couple of minutes - the eye blinks slowly.
 type: shell-verification
 question: "Verify the Dynatrace Operator pod is Running"
 buttonText: "Check the Operator"
-command: "source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && waitForOperatorReady"
+command: "kubectl get pods -n dynatrace --no-headers 2>/dev/null | grep operator | grep -q Running"
 expect:
   operator: exit-zero
 hint: "Run summonDynatrace, then wait for the operator pod and re-check."
@@ -36,7 +36,7 @@ explanation: "The Dynatrace Operator is Running - it will manage OneAgent and in
 type: shell-verification
 question: "Verify OneAgent injected into the Todo app pods"
 buttonText: "Check Injection"
-command: "source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && waitForOneAgentInjected"
+command: "source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && isOneAgentInjected"
 expect:
   operator: exit-zero
 hint: "Injection happens on the pod restart summonDynatrace performs. Give it a minute."

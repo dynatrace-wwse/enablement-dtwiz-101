@@ -31,7 +31,7 @@ generateWizardTraffic
 type: shell-verification
 question: "Verify the Todo app pods are Running"
 buttonText: "Check the Quest Board"
-command: "source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && waitForTodoApp"
+command: "kubectl get pods -n todoapp --no-headers 2>/dev/null | grep -q Running"
 expect:
   operator: exit-zero
 hint: "Run deployTodoWizardApp, then wait for the rollout and re-check."

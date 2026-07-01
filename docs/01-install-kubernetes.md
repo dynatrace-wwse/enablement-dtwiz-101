@@ -36,7 +36,7 @@ You should see one node with status `Ready`.
 type: shell-verification
 question: "Verify the Kubernetes node is Ready"
 buttonText: "Check the Cluster"
-command: "source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && waitForClusterReady"
+command: "kubectl get nodes --no-headers 2>/dev/null | grep -q ' Ready'"
 expect:
   operator: exit-zero
 hint: "Run conjureCluster in the Terminal, then wait ~30 seconds and re-check."

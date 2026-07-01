@@ -100,6 +100,14 @@ waitForOperatorReady(){
   printError "Dynatrace Operator pod not Running in time"; return 1
 }
 
+# Single-shot predicate: is OneAgent injected into the Todo app pods right now?
+# Used by the section-03 shell-verification (kept quick so the driver's baseline
+# phase does not burn a long wait before anything is deployed). The LAB_SOLUTION
+# verify uses the bounded-wait waitForOneAgentInjected instead.
+isOneAgentInjected(){
+  kubectl get pods -n todoapp -o jsonpath='{.items[*].metadata.annotations.oneagent\.dynatrace\.com/injected}' 2>/dev/null | tr ' ' '\n' | grep -q true
+}
+
 # OneAgent injection annotation present on Todo app pods.
 waitForOneAgentInjected(){
   printInfoSection "Waiting for the OneAgent injection annotation on todoapp pods"

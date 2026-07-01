@@ -68,7 +68,7 @@ the service recovering.
 type: shell-verification
 question: "Verify the Todo app has recovered"
 buttonText: "Confirm Recovery"
-command: "source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && waitForTodoApp"
+command: "kubectl get pods -n todoapp --no-headers 2>/dev/null | grep -q Running"
 expect:
   operator: exit-zero
 hint: "Run dispelChaos to scale the app back up, then re-check."
