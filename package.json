@@ -1,0 +1,14 @@
+{
+  "name": "enablement-dtwiz-101",
+  "version": "0.1.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "docs:dev": "node scripts/fetch-mkdocs-base.mjs && mkdocs serve --dev-addr=0.0.0.0:8000",
+    "docs:build": "node scripts/fetch-mkdocs-base.mjs && mkdocs build",
+    "healthcheck": "node scripts/healthcheck.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.2"
+  }
+}

@@ -1,0 +1,14 @@
+framework:
+  version: 0.1.1
+lab:
+  id: enablement-dtwiz-101
+  title: DTWiz 101: The Kubernetes Observability Spellbook
+  owner: enablement-team
+  audience: sales-engineers
+runtime:
+  docs: true
+  sampleApp: true
+  telemetryGenerator: true
+observability:
+  otel: true
+  rum: true

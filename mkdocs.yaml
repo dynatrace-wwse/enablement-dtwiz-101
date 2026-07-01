@@ -1,0 +1,20 @@
+INHERIT: mkdocs-base.yaml
+
+site_name: "DTWiz 101: The Kubernetes Observability Spellbook"
+repo_name: "View Code on GitHub"
+repo_url: "https://github.com/dynatrace-wwse/enablement-dtwiz-101"
+nav:
+  - "Welcome": index.md
+  - "00. Getting Started": 00-getting-started.md
+  - "01. Install Kubernetes": 01-install-kubernetes.md
+  - "02. Deploy the Todo App": 02-deploy-todo-app.md
+  - "03. Observe with Dynatrace": 03-observe-with-dynatrace.md
+  - "04. Troubleshoot and Recommend": 04-troubleshoot-and-recommend.md
+  - "Resources": resources.md
+  - "Cleanup": cleanup.md
+
+extra_javascript:
+  - javascripts/assessment-gate.js
+
+extra:
+  rum_snippet: "https://js-cdn.dynatrace.com/jstag/1612cf70810/bf81393wlb/7c50bce5c0cc890f_complete.js"
