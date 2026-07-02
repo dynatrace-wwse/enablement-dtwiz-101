@@ -10,13 +10,20 @@ source .devcontainer/util/source_framework.sh
 printInfoSection "Running integration smoke tests for $RepositoryName"
 
 _fail=0
-for tool in kubectl helm k3d; do
+# k3d is intentionally NOT preinstalled — installing the cluster IS Section 01
+# (conjureCluster downloads it). Only the tools the image must ship are required.
+for tool in kubectl helm; do
   if command -v "$tool" >/dev/null 2>&1; then
     printInfo "found: $tool"
   else
     printError "missing tool: $tool"; _fail=1
   fi
 done
+if command -v k3d >/dev/null 2>&1; then
+  printInfo "found: k3d (optional — Section 01 installs it)"
+else
+  printInfo "k3d not present yet — installed by the lab in Section 01 (expected)"
+fi
 
 # Framework helper must be loadable and the lab spells defined.
 if type conjureCluster >/dev/null 2>&1 && type dispelChaos >/dev/null 2>&1; then
