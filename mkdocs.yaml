@@ -1,6 +1,6 @@
 INHERIT: mkdocs-base.yaml
 
-site_name: "DTWiz 101: The Kubernetes Observability Spellbook"
+site_name: "Dynatrace Enablement Lab: dtwiz 101"
 repo_name: "View Code on GitHub"
 repo_url: "https://github.com/dynatrace-wwse/enablement-dtwiz-101"
 nav:
