@@ -1,5 +1,10 @@
 # DTWiz 101: The Kubernetes Observability Spellbook
 
+[![Integration tests](https://github.com/dynatrace-wwse/enablement-dtwiz-101/actions/workflows/integration-tests.yaml/badge.svg)](https://github.com/dynatrace-wwse/enablement-dtwiz-101/actions)
+[![Version](https://img.shields.io/github/v/release/dynatrace-wwse/enablement-dtwiz-101?color=blueviolet)](https://github.com/dynatrace-wwse/enablement-dtwiz-101/releases)
+[![Commits](https://img.shields.io/github/commits-since/dynatrace-wwse/enablement-dtwiz-101/latest?color=ff69b4&include_prereleases)](https://github.com/dynatrace-wwse/enablement-dtwiz-101/graphs/commit-activity)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=green)](https://github.com/dynatrace-wwse/enablement-dtwiz-101/blob/main/LICENSE)
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live-green)](https://dynatrace-wwse.github.io/enablement-dtwiz-101/)
 Dynatrace in-app enablement lab — hands-on training for sales engineers.
 
 ## What this lab covers
