@@ -1,0 +1,29 @@
+{
+  "templateVersion": "1.0.0",
+  "id": "enablement-dtwiz-101-02-deploy-todo-app",
+  "category": "CO",
+  "title": "Deploy the Todo App - Knowledge Check",
+  "description": "Confirm you understand how the app was deployed and exposed.",
+  "difficulty": "beginner",
+  "estimatedTime": 3,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "multiple-choice",
+      "title": "How is the Todo app reachable at localhost:8080?",
+      "content": "After deployTodoWizardApp, the app UI is reachable in the browser. What makes that work?",
+      "options": [
+        { "id": "a", "text": "It is registered behind the cluster's ingress controller", "isCorrect": true, "explanation": "deployTodoApp deploys and registers the app behind ingress." },
+        { "id": "b", "text": "The app runs directly on the host, not in Kubernetes", "isCorrect": false, "explanation": "It runs as pods in the todoapp namespace." },
+        { "id": "c", "text": "Dynatrace proxies the traffic", "isCorrect": false, "explanation": "Dynatrace observes traffic, it does not route it." }
+      ],
+      "correctAnswer": "a",
+      "explanation": "The app is exposed through the ingress controller installed in Section 01.",
+      "points": 10,
+      "hints": ["Recall what conjureCluster installed alongside the cluster."]
+    }
+  ],
+  "maxScore": 10,
+  "tags": ["dtwiz", "kubernetes"],
+  "learningObjectives": ["Describe how a workload is deployed and exposed on the cluster."]
+}

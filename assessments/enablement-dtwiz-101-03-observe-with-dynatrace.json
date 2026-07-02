@@ -1,0 +1,44 @@
+{
+  "templateVersion": "1.0.0",
+  "id": "enablement-dtwiz-101-03-observe-with-dynatrace",
+  "category": "CO",
+  "title": "Observe with Dynatrace - Knowledge Check",
+  "description": "Confirm you understand how Dynatrace instrumented the app.",
+  "difficulty": "beginner",
+  "estimatedTime": 4,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "multiple-choice",
+      "title": "How does the Todo app get instrumented?",
+      "content": "summonDynatrace deploys the Operator and a DynaKube, then restarts the Todo app. Why the restart?",
+      "options": [
+        { "id": "a", "text": "So OneAgent can inject into the new pods automatically (no code changes)", "isCorrect": true, "explanation": "Injection happens when pods are (re)created after the DynaKube is applied." },
+        { "id": "b", "text": "To clear the app's database", "isCorrect": false, "explanation": "The restart does not touch app data." },
+        { "id": "c", "text": "Because the app crashes without Dynatrace", "isCorrect": false, "explanation": "The app runs fine uninstrumented; the restart is only for injection." }
+      ],
+      "correctAnswer": "a",
+      "explanation": "OneAgent injects into pods created after the DynaKube is applied, so the app is restarted to pick up injection.",
+      "points": 10,
+      "hints": ["Injection is a pod-creation-time action."]
+    },
+    {
+      "id": "q2",
+      "type": "multiple-choice",
+      "title": "Which DQL time bound did the log check use?",
+      "content": "The log verification query filtered timestamps how?",
+      "options": [
+        { "id": "a", "text": "timestamp > now() - 10m", "isCorrect": true, "explanation": "Always time-bound DQL; the check used the last 10 minutes." },
+        { "id": "b", "text": "No time filter at all", "isCorrect": false, "explanation": "Unbounded DQL is discouraged and scans too much." },
+        { "id": "c", "text": "timestamp > now() - 30d", "isCorrect": false, "explanation": "Far too wide for a freshness check." }
+      ],
+      "correctAnswer": "a",
+      "explanation": "The query bounded to the last 10 minutes to check that logs are flowing now.",
+      "points": 10,
+      "hints": ["Look back at the fetch logs query."]
+    }
+  ],
+  "maxScore": 20,
+  "tags": ["dtwiz", "dynatrace", "observability"],
+  "learningObjectives": ["Explain OneAgent injection.", "Recall DQL time-bounding conventions."]
+}
