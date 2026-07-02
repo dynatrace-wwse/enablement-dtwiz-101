@@ -82,21 +82,49 @@ generateWizardTraffic(){
 # Section 03 - Observe with Dynatrace (the all-seeing eye)
 # ----------------------------------------------------------------------
 summonDynatrace(){
-  printInfoSection "Summoning the Dynatrace Operator + ActiveGate (applicationMonitoring)"
+  printInfoSection "Summoning the Dynatrace Operator + applicationMonitoring for the Todo app"
+  dynatraceEvalReadSaveCredentials
   dynatraceDeployOperator
-  deployApplicationMonitoring
 
-  # Injection readiness lags the DynaKube apply: the mutating webhook must be
-  # Ready AND the operator must have configured injection before a pod restart
-  # will actually inject OneAgent. Restarting too early creates un-injected pods
-  # that are never restarted again. So: wait for the webhook, then restart and
-  # RETRY until the injection annotation appears (or give up after several tries).
+  # IMPORTANT: this repo is named "Enablement-DTWiz-101" (mixed case). The
+  # framework derives the DynaKube name and its token secret from RepositoryName,
+  # but Kubernetes resource names must be lowercase RFC-1123 — so the framework's
+  # deployApplicationMonitoring produces an INVALID DynaKube/secret name that the
+  # operator's validating webhook silently rejects (no DynaKube -> no injection).
+  # Create our own lowercase-named token secret + DynaKube instead. The injection
+  # namespaceSelector lives at spec.oneAgent.applicationMonitoring.namespaceSelector
+  # in v1beta6; scope it to the todoapp namespace.
+  printInfo "Creating the Dynatrace token secret (lowercase name)"
+  kubectl -n dynatrace create secret generic dtwiz-tokens \
+    --from-literal="apiToken=$DT_OPERATOR_TOKEN" \
+    --from-literal="dataIngestToken=$DT_INGEST_TOKEN" \
+    --dry-run=client -o yaml | kubectl apply -f -
+
   printInfo "Waiting for the Dynatrace mutating webhook to be Ready"
   kubectl -n dynatrace wait pod \
     --for=condition=ready \
     --selector=app.kubernetes.io/name=dynatrace-operator,app.kubernetes.io/component=webhook \
     --timeout=180s 2>/dev/null || true
 
+  printInfo "Applying the applicationMonitoring DynaKube (scoped to todoapp)"
+  kubectl apply -f - <<DTWIZ_DK
+apiVersion: dynatrace.com/v1beta6
+kind: DynaKube
+metadata:
+  name: dtwiz-101
+  namespace: dynatrace
+spec:
+  apiUrl: ${DT_TENANT}/api
+  tokens: dtwiz-tokens
+  oneAgent:
+    applicationMonitoring:
+      namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: todoapp
+DTWIZ_DK
+
+  # Injection readiness lags the DynaKube apply: restart the Todo app and RETRY
+  # until the injection annotation appears (webhook/CSI take a moment to be ready).
   local i=0
   while [ "$i" -lt 5 ]; do
     printInfo "Restarting the Todo app so OneAgent can inject (attempt $((i + 1))/5)"
