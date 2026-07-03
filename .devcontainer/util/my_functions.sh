@@ -74,12 +74,26 @@ isAnalyzeWorking(){
 }
 
 # ----------------------------------------------------------------------
-# Section 03 - Deploy the schnitzel demo app
+# Section 04 - Deploy the schnitzel demo app (platform-token tier)
 # ----------------------------------------------------------------------
+# `dtwiz install demo` and `dtwiz watch` use the Dynatrace platform APIs, so
+# they require a platform token (dt0s16) in DT_PLATFORM_TOKEN. The lab only
+# injects a Classic access token - the demo tier is skipped cleanly when the
+# platform token is absent so the training stays completable everywhere.
 deployDtwizDemo(){
   isDtwizInstalled >/dev/null || return 1
+  if [ -z "${DT_PLATFORM_TOKEN:-}" ]; then
+    printWarn "DT_PLATFORM_TOKEN is not set - the demo installer needs a platform token (dt0s16)."
+    printInfo "Export one (Settings -> Platform tokens in your tenant) and re-run, or skip this tier."
+    return 0
+  fi
   printInfoSection "Deploying the schnitzel demo app (dtwiz install demo)"
-  dtwiz install demo --experimental --yes --access-token "$DT_OPERATOR_TOKEN"
+  # dtwiz extracts the demo under $TMPDIR and rename()s it into the current
+  # directory - in Codespaces /tmp and /workspaces are different mounts, so the
+  # rename fails with "invalid cross-device link" unless TMPDIR shares the
+  # workspace mount. stdin from /dev/null skips the interactive watch screen.
+  mkdir -p "${REPO_PATH:-.}/.dtwiz-tmp"
+  TMPDIR="${REPO_PATH:-.}/.dtwiz-tmp" dtwiz install demo --experimental --yes < /dev/null
 }
 
 # Demo processes alive? (bounded wait - the app takes a moment to boot).
@@ -99,6 +113,17 @@ isDemoRunning(){
   pgrep -f "schnitzel" >/dev/null 2>&1 \
     && { printInfo "schnitzel demo is running"; return 0; } \
     || { printError "schnitzel demo is not running - run deployDtwizDemo"; return 1; }
+}
+
+# Section-04 check: demo running, OR cleanly skipped because no platform token
+# is available in this environment (keeps the lab completable with only the
+# injected Classic access token).
+verifyDemoOrSkip(){
+  if [ -z "${DT_PLATFORM_TOKEN:-}" ]; then
+    printInfo "No DT_PLATFORM_TOKEN in this environment - demo tier skipped (OK)."
+    return 0
+  fi
+  waitForDemoRunning
 }
 
 # ----------------------------------------------------------------------

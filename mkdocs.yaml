@@ -8,8 +8,8 @@ nav:
   - "00. Getting Started": 00-getting-started.md
   - "01. Install dtwiz": 01-install-dtwiz.md
   - "02. Connect & Analyze": 02-connect-and-analyze.md
-  - "03. Deploy the Demo App": 03-install-demo.md
-  - "04. Recommend & Watch": 04-recommend-and-watch.md
+  - "03. Recommend": 03-recommend.md
+  - "04. The Demo App & Watch": 04-demo-and-watch.md
   - "Resources": resources.md
   - "Cleanup": cleanup.md
 

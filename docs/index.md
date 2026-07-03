@@ -20,8 +20,8 @@ DTWiz: 100% confidence, 60% documentation.
 | Install the dtwiz CLI from scratch | `installDtwiz` (or the one-liner) |
 | Check the connection to your tenant | `dtwiz status` |
 | Analyze what a system runs | `dtwiz analyze` |
-| Deploy & instrument the schnitzel demo app | `dtwiz install demo` |
 | Get ranked ingestion recommendations | `dtwiz recommend` |
+| Deploy & instrument the schnitzel demo app | `dtwiz install demo` |
 | Watch data arrive in Dynatrace | `dtwiz watch` |
 
 !!! tip "Why this lab is different"

@@ -1,11 +1,11 @@
 {
   "templateVersion": "1.0.0",
-  "id": "enablement-dtwiz-101-04-recommend-and-watch",
+  "id": "enablement-dtwiz-101-03-recommend",
   "category": "CO",
-  "title": "Recommend & Watch - Knowledge Check",
-  "description": "Confirm you understand dtwiz recommendations, watch and setup.",
+  "title": "Recommend - Knowledge Check",
+  "description": "Confirm you understand dtwiz recommendations and setup.",
   "difficulty": "beginner",
-  "estimatedTime": 4,
+  "estimatedTime": 3,
   "questions": [
     {
       "id": "q1",
@@ -25,21 +25,6 @@
     {
       "id": "q2",
       "type": "multiple-choice",
-      "title": "Why did `dtwiz watch` need a different token?",
-      "content": "In this lab `dtwiz watch` refused to run with the injected access token. Why?",
-      "options": [
-        { "id": "a", "text": "watch queries the platform APIs, which require a platform token (dt0s16) via DT_PLATFORM_TOKEN", "isCorrect": true, "explanation": "Classic dt0c01 tokens cover the classic APIs (status, recommend, installs) but not the platform data queries watch uses." },
-        { "id": "b", "text": "watch needs GitHub credentials", "isCorrect": false, "explanation": "GitHub is only involved when downloading dtwiz itself." },
-        { "id": "c", "text": "The token had expired", "isCorrect": false, "explanation": "The same token kept working for recommend - it is a token TYPE difference, not expiry." }
-      ],
-      "correctAnswer": "a",
-      "explanation": "watch live-tails newly ingested data through platform APIs - that requires DT_PLATFORM_TOKEN (dt0s16).",
-      "points": 10,
-      "hints": ["Remember the token-type info box in Section 02."]
-    },
-    {
-      "id": "q3",
-      "type": "multiple-choice",
       "title": "What does `dtwiz setup` chain together?",
       "content": "You used the individual commands in this lab. What does the interactive `dtwiz setup` do?",
       "options": [
@@ -53,7 +38,7 @@
       "hints": ["Its help text says: analyze, recommend, and install the best ingestion method."]
     }
   ],
-  "maxScore": 30,
-  "tags": ["dtwiz", "recommend", "watch", "setup"],
-  "learningObjectives": ["Read dtwiz recommendations.", "Know which token unlocks watch.", "Understand the setup flow."]
+  "maxScore": 20,
+  "tags": ["dtwiz", "recommend", "setup"],
+  "learningObjectives": ["Read dtwiz recommendations.", "Understand the setup flow."]
 }
