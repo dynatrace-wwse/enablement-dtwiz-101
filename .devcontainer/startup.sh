@@ -1,10 +1,9 @@
 #!/bin/bash
-# DTWiz 101 startup.
-# IMPORTANT: unlike most labs, this training does NOT auto-start the Kubernetes
-# cluster or deploy the app. Installing Kubernetes is Section 01 of the lab - the
-# learner conjures the cluster themselves (or the LAB_SOLUTION does, for nightly
-# automated testing). We only set up the terminal and the MkDocs training guide.
-export SECONDS=0
+# DTWiz 101 startup — serve the MkDocs training guide.
+# Called from post-create.sh (first creation) and post-start.sh (every resume).
+# The dtwiz CLI itself is NOT installed here: installing it is Section 01 of
+# the lab (the learner runs the official one-liner, or the LAB_SOLUTION does,
+# for automated testing). This script only makes sure the guide is up.
 source .devcontainer/util/source_framework.sh
 
 ensureMkdocs(){
@@ -24,8 +23,4 @@ ensureMkdocs(){
   exposeMkdocs
 }
 
-setUpTerminal
 ensureMkdocs
-finalizePostCreation
-
-printInfoSection "DTWiz 101 is ready. Open the training guide and start with Section 01 - Install Kubernetes."

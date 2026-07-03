@@ -1,0 +1,59 @@
+{
+  "templateVersion": "1.0.0",
+  "id": "enablement-dtwiz-101-02-connect-and-analyze",
+  "category": "CO",
+  "title": "Connect & Analyze - Knowledge Check",
+  "description": "Confirm you understand dtwiz credentials and system analysis.",
+  "difficulty": "beginner",
+  "estimatedTime": 4,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "multiple-choice",
+      "title": "Passing the Classic access token",
+      "content": "The lab injects a Classic API token (dt0c01) as DT_OPERATOR_TOKEN. How does dtwiz accept it?",
+      "options": [
+        { "id": "a", "text": "Only explicitly, via the --access-token flag", "isCorrect": true, "explanation": "dtwiz deliberately does NOT read a Classic token from environment variables, so you always know which credential is used." },
+        { "id": "b", "text": "Automatically from the DT_ACCESS_TOKEN environment variable", "isCorrect": false, "explanation": "dtwiz intentionally does not read Classic tokens from the environment - only DT_PLATFORM_TOKEN is read automatically." },
+        { "id": "c", "text": "It rewrites the token into a platform token first", "isCorrect": false, "explanation": "Token types cannot be converted - they are different credentials." }
+      ],
+      "correctAnswer": "a",
+      "explanation": "Classic tokens are opt-in: `dtwiz status --access-token \"$DT_OPERATOR_TOKEN\"`. Platform tokens (dt0s16) are read from DT_PLATFORM_TOKEN automatically.",
+      "points": 10,
+      "hints": ["Check `dtwiz --help` - the flag description spells it out."]
+    },
+    {
+      "id": "q2",
+      "type": "multiple-choice",
+      "title": "What does `dtwiz analyze` need?",
+      "content": "Which credentials does `dtwiz analyze` require to inspect the local system?",
+      "options": [
+        { "id": "a", "text": "None - it inspects the local machine only and sends nothing anywhere", "isCorrect": true, "explanation": "analyze is a local inventory: platform, Docker, Kubernetes, cloud CLIs, agents, services." },
+        { "id": "b", "text": "A platform token, because it queries Grail", "isCorrect": false, "explanation": "That's `dtwiz watch`. analyze is purely local." },
+        { "id": "c", "text": "kubectl access to a running cluster", "isCorrect": false, "explanation": "A cluster is one thing analyze can DETECT, not a requirement." }
+      ],
+      "correctAnswer": "a",
+      "explanation": "analyze runs offline against the local system - tokens only matter when dtwiz talks to your tenant (status, recommend, install, watch).",
+      "points": 10,
+      "hints": ["You ran it before configuring anything tenant-side."]
+    },
+    {
+      "id": "q3",
+      "type": "multiple-choice",
+      "title": "Machine-readable analysis",
+      "content": "You want to feed the analysis into a script. Which command fits?",
+      "options": [
+        { "id": "a", "text": "dtwiz analyze --json", "isCorrect": true, "explanation": "Both analyze and recommend support --json for structured output." },
+        { "id": "b", "text": "dtwiz analyze --verbose", "isCorrect": false, "explanation": "--verbose adds detail for humans, not structure for machines." },
+        { "id": "c", "text": "dtwiz export analyze", "isCorrect": false, "explanation": "There is no export subcommand." }
+      ],
+      "correctAnswer": "a",
+      "explanation": "`--json` turns the analyze/recommend output into structured JSON for automation.",
+      "points": 10,
+      "hints": ["The same flag works on `recommend`."]
+    }
+  ],
+  "maxScore": 30,
+  "tags": ["dtwiz", "tokens", "analyze"],
+  "learningObjectives": ["Authenticate dtwiz correctly.", "Run and read a system analysis."]
+}

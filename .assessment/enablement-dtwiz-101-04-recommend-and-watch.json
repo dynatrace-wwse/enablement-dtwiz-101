@@ -1,0 +1,59 @@
+{
+  "templateVersion": "1.0.0",
+  "id": "enablement-dtwiz-101-04-recommend-and-watch",
+  "category": "CO",
+  "title": "Recommend & Watch - Knowledge Check",
+  "description": "Confirm you understand dtwiz recommendations, watch and setup.",
+  "difficulty": "beginner",
+  "estimatedTime": 4,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "multiple-choice",
+      "title": "What does `dtwiz recommend` return?",
+      "content": "What is the output of `dtwiz recommend`?",
+      "options": [
+        { "id": "a", "text": "A ranked list of Dynatrace ingestion methods for this system, with the reasoning behind each", "isCorrect": true, "explanation": "It combines the local analysis with tenant state and ranks what to install next." },
+        { "id": "b", "text": "A list of Dynatrace problems detected in the tenant", "isCorrect": false, "explanation": "Problem feeds live in the tenant UI/API - recommend is about instrumentation choices." },
+        { "id": "c", "text": "Sizing recommendations for your Kubernetes cluster", "isCorrect": false, "explanation": "recommend targets observability coverage, not capacity planning." }
+      ],
+      "correctAnswer": "a",
+      "explanation": "recommend = ranked ingestion methods (OneAgent, Operator, OTel, cloud) tailored to what analyze found.",
+      "points": 10,
+      "hints": ["It even marks what is already covered (like a running OneAgent)."]
+    },
+    {
+      "id": "q2",
+      "type": "multiple-choice",
+      "title": "Why did `dtwiz watch` need a different token?",
+      "content": "In this lab `dtwiz watch` refused to run with the injected access token. Why?",
+      "options": [
+        { "id": "a", "text": "watch queries the platform APIs, which require a platform token (dt0s16) via DT_PLATFORM_TOKEN", "isCorrect": true, "explanation": "Classic dt0c01 tokens cover the classic APIs (status, recommend, installs) but not the platform data queries watch uses." },
+        { "id": "b", "text": "watch needs GitHub credentials", "isCorrect": false, "explanation": "GitHub is only involved when downloading dtwiz itself." },
+        { "id": "c", "text": "The token had expired", "isCorrect": false, "explanation": "The same token kept working for recommend - it is a token TYPE difference, not expiry." }
+      ],
+      "correctAnswer": "a",
+      "explanation": "watch live-tails newly ingested data through platform APIs - that requires DT_PLATFORM_TOKEN (dt0s16).",
+      "points": 10,
+      "hints": ["Remember the token-type info box in Section 02."]
+    },
+    {
+      "id": "q3",
+      "type": "multiple-choice",
+      "title": "What does `dtwiz setup` chain together?",
+      "content": "You used the individual commands in this lab. What does the interactive `dtwiz setup` do?",
+      "options": [
+        { "id": "a", "text": "analyze → recommend → install, as one guided interactive flow", "isCorrect": true, "explanation": "setup is the one-command wizard combining everything you did by hand." },
+        { "id": "b", "text": "It only configures dtwiz's own config file", "isCorrect": false, "explanation": "setup drives the full analyze/recommend/install flow, not just configuration." },
+        { "id": "c", "text": "It uninstalls and reinstalls dtwiz", "isCorrect": false, "explanation": "That would be `dtwiz uninstall self` plus the installer." }
+      ],
+      "correctAnswer": "a",
+      "explanation": "setup = the interactive wizard: analyze the system, recommend methods, install the chosen one.",
+      "points": 10,
+      "hints": ["Its help text says: analyze, recommend, and install the best ingestion method."]
+    }
+  ],
+  "maxScore": 30,
+  "tags": ["dtwiz", "recommend", "watch", "setup"],
+  "learningObjectives": ["Read dtwiz recommendations.", "Know which token unlocks watch.", "Understand the setup flow."]
+}

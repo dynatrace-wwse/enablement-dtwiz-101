@@ -1,29 +1,33 @@
-# DTWiz 101: The Kubernetes Observability Spellbook
+# DTWiz 101: One Wizard to Instrument Them All
 
-> In which a mildly over-caffeinated wizard teaches you to conjure a Kubernetes
-> cluster, summon a Todo app, and make Dynatrace see all - then breaks
-> everything on purpose so you can fix it. Standard wizard behaviour.
+> In which a mildly over-caffeinated wizard hands you their favourite wand —
+> **dtwiz**, the Dynatrace Ingest CLI — and teaches you to analyze any
+> environment, deploy a demo app, and let Dynatrace see all. No slides, no
+> hand-waving: a real terminal, a real tenant, one very opinionated CLI.
 
-Welcome, apprentice. You are about to learn the ancient art of *observability*
-the hands-on way: no slides, no hand-waving, just a real cluster you build
-yourself and a real app you watch Dynatrace watch.
+Welcome, apprentice. [dtwiz](https://github.com/dynatrace-oss/dtwiz) analyzes
+a system and figures out the **best way to get Dynatrace observability into
+it** — OneAgent, Kubernetes Operator, OpenTelemetry, cloud integrations — then
+installs it for you. In this lab you learn to wield it end to end.
 
 ![DTWiz, your questionably qualified guide](img/dtwiz-wizard.png){ width="260" }
 /// caption
 DTWiz: 100% confidence, 60% documentation.
 ///
 
-| You will learn to | Spell used |
+| You will learn to | Command used |
 | --- | --- |
-| Install Kubernetes from scratch (nothing is pre-baked) | `conjureCluster` |
-| Deploy a Todo app onto your cluster | `deployTodoWizardApp` |
-| Make Dynatrace observe the app end to end | `summonDynatrace` |
-| Diagnose and fix a deliberately broken service | `dispelChaos` |
+| Install the dtwiz CLI from scratch | `installDtwiz` (or the one-liner) |
+| Check the connection to your tenant | `dtwiz status` |
+| Analyze what a system runs | `dtwiz analyze` |
+| Deploy & instrument the schnitzel demo app | `dtwiz install demo` |
+| Get ranked ingestion recommendations | `dtwiz recommend` |
+| Watch data arrive in Dynatrace | `dtwiz watch` |
 
 !!! tip "Why this lab is different"
-    Most labs hand you a running cluster. Not here. You will **install
-    Kubernetes yourself** in Section 01 - because a wizard who cannot conjure
-    their own cluster is just a person in a pointy hat.
+    Most labs pre-install everything. Not here. You will **install dtwiz
+    yourself** in Section 01 — because a wizard who cannot summon their own
+    wand is just a person in a pointy hat.
 
 <div class="grid cards" markdown>
 - [Begin: Getting Started](00-getting-started.md)
