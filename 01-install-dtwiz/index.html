@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="../02-deploy-todo-app/">
+        <link rel="prev" href="../00-getting-started/">
       
       
-        <link rel="next" href="../04-troubleshoot-and-recommend/">
+        <link rel="next" href="../02-connect-and-analyze/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -20,7 +20,7 @@
     
     
       
-        <title>03. Observe with Dynatrace - Dynatrace Enablement Lab: dtwiz 101</title>
+        <title>01. Install dtwiz - Dynatrace Enablement Lab: dtwiz 101</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#03-observe-with-dynatrace-the-all-seeing-eye" class="md-skip">
+        <a href="#01-install-dtwiz-summon-the-wand" class="md-skip">
           Skip to content
         </a>
       
@@ -115,7 +115,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              03. Observe with Dynatrace
+              01. Install dtwiz
             
           </span>
         </div>
@@ -301,46 +301,6 @@
       
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../01-install-kubernetes/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    01. Install Kubernetes
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../02-deploy-todo-app/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    02. Deploy the Todo App
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
     
   
   
@@ -357,7 +317,7 @@
           
   
   <span class="md-ellipsis">
-    03. Observe with Dynatrace
+    01. Install dtwiz
   </span>
   
 
@@ -368,7 +328,7 @@
         
   
   <span class="md-ellipsis">
-    03. Observe with Dynatrace
+    01. Install dtwiz
   </span>
   
 
@@ -390,36 +350,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#summon-dynatrace" class="md-nav__link">
+  <a href="#cast-the-spell" class="md-nav__link">
     <span class="md-ellipsis">
-      Summon Dynatrace
+      Cast the spell
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#verify-the-operator-is-running" class="md-nav__link">
+  <a href="#verify-dtwiz-is-installed" class="md-nav__link">
     <span class="md-ellipsis">
-      Verify the Operator is Running
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#verify-oneagent-injected-into-the-todo-app" class="md-nav__link">
-    <span class="md-ellipsis">
-      Verify OneAgent injected into the Todo app
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#see-it-in-your-tenant-dql" class="md-nav__link">
-    <span class="md-ellipsis">
-      See it in your tenant (DQL)
+      Verify dtwiz is installed
     </span>
   </a>
   
@@ -440,11 +382,51 @@
   
   
     <li class="md-nav__item">
-      <a href="../04-troubleshoot-and-recommend/" class="md-nav__link">
+      <a href="../02-connect-and-analyze/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    04. Troubleshoot and Recommend
+    02. Connect & Analyze
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-recommend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    03. Recommend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-demo-and-watch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    04. The Demo App & Watch
   </span>
   
 
@@ -520,36 +502,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#summon-dynatrace" class="md-nav__link">
+  <a href="#cast-the-spell" class="md-nav__link">
     <span class="md-ellipsis">
-      Summon Dynatrace
+      Cast the spell
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#verify-the-operator-is-running" class="md-nav__link">
+  <a href="#verify-dtwiz-is-installed" class="md-nav__link">
     <span class="md-ellipsis">
-      Verify the Operator is Running
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#verify-oneagent-injected-into-the-todo-app" class="md-nav__link">
-    <span class="md-ellipsis">
-      Verify OneAgent injected into the Todo app
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#see-it-in-your-tenant-dql" class="md-nav__link">
-    <span class="md-ellipsis">
-      See it in your tenant (DQL)
+      Verify dtwiz is installed
     </span>
   </a>
   
@@ -573,85 +537,57 @@
   
 
 
-<h1 id="03-observe-with-dynatrace-the-all-seeing-eye">03. Observe with Dynatrace (The All-Seeing Eye)<a class="headerlink" href="#03-observe-with-dynatrace-the-all-seeing-eye" title="Permanent link">#</a></h1>
-<p><img align="right" alt="The all-seeing Dynatrace eye" src="../img/dtwiz-eye.png" width="220" /></p>
-<p>Your app is running, but you are flying blind. Time to summon the <strong>all-seeing
-eye</strong>: the Dynatrace Operator deploys OneAgent, which auto-instruments the Todo
-app - traces, metrics, logs, and topology, with zero code changes.</p>
-<h2 id="summon-dynatrace">Summon Dynatrace<a class="headerlink" href="#summon-dynatrace" title="Permanent link">#</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">source</span><span class="w"> </span>.devcontainer/util/source_framework.sh
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>summonDynatrace
+<h1 id="01-install-dtwiz-summon-the-wand">01. Install dtwiz (Summon the Wand)<a class="headerlink" href="#01-install-dtwiz-summon-the-wand" title="Permanent link">#</a></h1>
+<p><img align="right" alt="Wizard summoning the CLI out of thin air" src="../img/dtwiz-conjure.png" width="220" /></p>
+<p>No dtwiz exists in your workshop yet. A real wizard summons their own wand.
+You will install the official CLI exactly the way any SE or customer would on
+a laptop or server.</p>
+<h2 id="cast-the-spell">Cast the spell<a class="headerlink" href="#cast-the-spell" title="Permanent link">#</a></h2>
+<p>In the <strong>Terminal</strong> tab, run the official install one-liner:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">source</span><span class="w"> </span>&lt;<span class="o">(</span>curl<span class="w"> </span>-sSL<span class="w"> </span>https://raw.githubusercontent.com/dynatrace-oss/dtwiz/main/scripts/install.sh<span class="o">)</span>
 </span></code></pre></div>
-<p><code>summonDynatrace</code> deploys the Dynatrace Operator, applies an
-<code>applicationMonitoring</code> DynaKube, and restarts the Todo app so OneAgent can
-inject into it. This takes a couple of minutes - the eye blinks slowly.</p>
-<h2 id="verify-the-operator-is-running">Verify the Operator is Running<a class="headerlink" href="#verify-the-operator-is-running" title="Permanent link">#</a></h2>
+<p>The installer detects your platform and architecture, downloads the right
+binary, and puts it on your <code>PATH</code> (in <code>/usr/local/bin</code>, or <code>~/bin</code> as a
+fallback). Sourcing it makes <code>dtwiz</code> available immediately in the same
+terminal.</p>
+<p>Then admire your handiwork:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>dtwiz<span class="w"> </span>version
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">The lab spell</p>
+<p><code>installDtwiz</code> does the same thing (it wraps the one-liner) and is what
+the automated solution uses. Feel free to use either.</p>
+</div>
+<h2 id="verify-dtwiz-is-installed">Verify dtwiz is installed<a class="headerlink" href="#verify-dtwiz-is-installed" title="Permanent link">#</a></h2>
 <!-- LAB_QUESTION
 type: shell-verification
-question: "Verify the Dynatrace Operator pod is Running"
-buttonText: "Check the Operator"
-command: "kubectl get pods -n dynatrace --no-headers 2>/dev/null | grep operator | grep -q Running"
+question: "Verify the dtwiz CLI is installed"
+buttonText: "Check the Wand"
+command: "source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && isDtwizInstalled"
 expect:
   operator: exit-zero
-hint: "Run summonDynatrace, then wait for the operator pod and re-check."
-explanation: "The Dynatrace Operator is Running - it will manage OneAgent and injection."
--->
-
-<h2 id="verify-oneagent-injected-into-the-todo-app">Verify OneAgent injected into the Todo app<a class="headerlink" href="#verify-oneagent-injected-into-the-todo-app" title="Permanent link">#</a></h2>
-<!-- LAB_QUESTION
-type: shell-verification
-question: "Verify OneAgent injected into the Todo app pods"
-buttonText: "Check Injection"
-command: "source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && isOneAgentInjected"
-expect:
-  operator: exit-zero
-hint: "Injection happens on the pod restart summonDynatrace performs. Give it a minute."
-explanation: "OneAgent is injected - the Todo app is now fully observed by Dynatrace."
--->
-
-<h2 id="see-it-in-your-tenant-dql">See it in your tenant (DQL)<a class="headerlink" href="#see-it-in-your-tenant-dql" title="Permanent link">#</a></h2>
-<p>Once traffic has flowed for a couple of minutes, confirm Dynatrace is collecting
-logs from the app. Run this in <strong>Notebooks</strong>, or click the check:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>fetch logs
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>| filter k8s.namespace.name == &quot;todoapp&quot;
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>| filter timestamp &gt; now() - 10m
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>| limit 5
-</span></code></pre></div>
-<!-- LAB_QUESTION
-type: dql-verification
-question: "Verify Dynatrace is collecting logs from the Todo app"
-buttonText: "Check DT Logs"
-dql: |
-  fetch logs
-  | filter k8s.namespace.name == "todoapp"
-  | filter timestamp > now() - 10m
-  | limit 1
-expect:
-  operator: not-empty
-hint: "Add a few Todos (or run generateWizardTraffic), then wait 2 minutes."
-explanation: "Logs are flowing into Grail - the all-seeing eye is open."
+hint: "Run the install one-liner (or installDtwiz) in the Terminal, then re-check."
+explanation: "dtwiz is installed and answers to `dtwiz version`. You have summoned the wand."
 -->
 
 <!-- LAB_SOLUTION
 commands:
-  - summonDynatrace
+  - installDtwiz
 verify:
-  - source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && waitForOperatorReady
-  - source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && waitForOneAgentInjected
+  - source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && isDtwizInstalled
 reveal: |
   ### The spell explained
-  `summonDynatrace` runs `dynatraceDeployOperator` (Helm-installs the Operator +
-  creates the API-token secret), `deployApplicationMonitoring` (applies a DynaKube
-  in applicationMonitoring mode), then restarts the Todo app deployment so the
-  OneAgent code module injects into the new pods. The two verifies confirm the
-  Operator is Running and the injection annotation is present.
+  `installDtwiz` runs the official installer script from
+  `dynatrace-oss/dtwiz` and confirms the binary answers. The installer places
+  `dtwiz` in `/usr/local/bin` (using sudo) or `~/bin`, so it is available in
+  every new terminal.
 -->
 
-<!-- boundScenarioId: enablement-dtwiz-101-03-observe-with-dynatrace retake=false -->
+<!-- boundScenarioId: enablement-dtwiz-101-01-install-dtwiz retake=false -->
 
 <div class="grid cards">
 <ul>
-<li><a href="../04-troubleshoot-and-recommend/">Section 04: Troubleshoot and Recommend</a></li>
+<li><a href="../02-connect-and-analyze/">Section 02: Connect &amp; Analyze</a></li>
 </ul>
 </div>
 
@@ -691,7 +627,7 @@ reveal: |
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../02-deploy-todo-app/" class="md-footer__link md-footer__link--prev" aria-label="Previous: 02. Deploy the Todo App">
+          <a href="../00-getting-started/" class="md-footer__link md-footer__link--prev" aria-label="Previous: 00. Getting Started">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -701,20 +637,20 @@ reveal: |
                 Previous
               </span>
               <div class="md-ellipsis">
-                02. Deploy the Todo App
+                00. Getting Started
               </div>
             </div>
           </a>
         
         
           
-          <a href="../04-troubleshoot-and-recommend/" class="md-footer__link md-footer__link--next" aria-label="Next: 04. Troubleshoot and Recommend">
+          <a href="../02-connect-and-analyze/" class="md-footer__link md-footer__link--next" aria-label="Next: 02. Connect &amp; Analyze">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                04. Troubleshoot and Recommend
+                02. Connect & Analyze
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -759,7 +695,7 @@ reveal: |
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     if (typeof dynatrace !== 'undefined') {
-      dynatrace.sendBizEvent('page_load', {'page': "03. Observe with Dynatrace"});
+      dynatrace.sendBizEvent('page_load', {'page': "01. Install dtwiz"});
     }
   });
 </script>

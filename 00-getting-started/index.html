@@ -12,7 +12,7 @@
         <link rel="prev" href="..">
       
       
-        <link rel="next" href="../01-install-kubernetes/">
+        <link rel="next" href="../01-install-dtwiz/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -339,6 +339,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#your-credentials" class="md-nav__link">
+    <span class="md-ellipsis">
+      Your credentials
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#warm-up-incantation" class="md-nav__link">
     <span class="md-ellipsis">
       Warm-up incantation
@@ -362,11 +371,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../01-install-kubernetes/" class="md-nav__link">
+      <a href="../01-install-dtwiz/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    01. Install Kubernetes
+    01. Install dtwiz
   </span>
   
 
@@ -382,11 +391,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../02-deploy-todo-app/" class="md-nav__link">
+      <a href="../02-connect-and-analyze/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    02. Deploy the Todo App
+    02. Connect & Analyze
   </span>
   
 
@@ -402,11 +411,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../03-observe-with-dynatrace/" class="md-nav__link">
+      <a href="../03-recommend/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    03. Observe with Dynatrace
+    03. Recommend
   </span>
   
 
@@ -422,11 +431,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../04-troubleshoot-and-recommend/" class="md-nav__link">
+      <a href="../04-demo-and-watch/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    04. Troubleshoot and Recommend
+    04. The Demo App & Watch
   </span>
   
 
@@ -511,6 +520,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#your-credentials" class="md-nav__link">
+    <span class="md-ellipsis">
+      Your credentials
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#warm-up-incantation" class="md-nav__link">
     <span class="md-ellipsis">
       Warm-up incantation
@@ -539,9 +557,9 @@
 
 <h1 id="00-getting-started">00. Getting Started<a class="headerlink" href="#00-getting-started" title="Permanent link">#</a></h1>
 <p>Every wizard needs a workshop. Yours is a Dev Container (in the Dynatrace
-Enablement App or a GitHub Codespace) that already has <code>kubectl</code>, <code>k3d</code>, <code>helm</code>,
-<code>k9s</code>, and the framework spells loaded — but, crucially, <strong>no running cluster
-yet</strong>. That is on purpose. You will conjure the cluster in Section 01.</p>
+Enablement App or a GitHub Codespace) with the framework spells loaded and your
+Dynatrace credentials already injected — but, crucially, <strong>no dtwiz yet</strong>. That
+is on purpose. You will summon it in Section 01.</p>
 <h2 id="your-workshop-surfaces">Your workshop surfaces<a class="headerlink" href="#your-workshop-surfaces" title="Permanent link">#</a></h2>
 <table>
 <thead>
@@ -556,43 +574,48 @@ yet</strong>. That is on purpose. You will conjure the cluster in Section 01.</p
 <td>This training guide (MkDocs)</td>
 </tr>
 <tr>
-<td><code>http://localhost:8080</code></td>
-<td>The Todo app web UI (after Section 02)</td>
-</tr>
-<tr>
-<td><code>http://localhost:3000</code></td>
-<td>Alternate app port</td>
+<td>Your Dynatrace tenant</td>
+<td>Where the data lands (<code>$DT_ENVIRONMENT</code>)</td>
 </tr>
 </tbody>
 </table>
 <p>The <strong>Terminal</strong> tab is your wand. Everything in this lab is typed there — or
 run for you by clicking a check button.</p>
+<h2 id="your-credentials">Your credentials<a class="headerlink" href="#your-credentials" title="Permanent link">#</a></h2>
+<p>The lab injected two environment variables you will use throughout:</p>
+<ul>
+<li><code>DT_ENVIRONMENT</code> — your Dynatrace tenant URL. dtwiz reads it automatically.</li>
+<li><code>DT_OPERATOR_TOKEN</code> — a Classic API token (<code>dt0c01.***</code>). dtwiz accepts it
+  via the <code>--access-token</code> flag — <strong>never</strong> from an environment variable
+  (that's a dtwiz safety choice, so you always know which credential you use).</li>
+</ul>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">echo</span><span class="w"> </span><span class="nv">$DT_ENVIRONMENT</span>
+</span></code></pre></div>
 <h2 id="warm-up-incantation">Warm-up incantation<a class="headerlink" href="#warm-up-incantation" title="Permanent link">#</a></h2>
 <p>Confirm the framework spells are loaded. Run the sample helper — it should do
 arithmetic no wizard should be proud of:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">source</span><span class="w"> </span>.devcontainer/util/source_framework.sh
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>customFunction
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>customFunction
 </span></code></pre></div>
 <!-- LAB_QUESTION
 type: shell-verification
 question: "Confirm the framework helper functions are loaded"
 buttonText: "Warm up the wand"
-command: "source .devcontainer/util/source_framework.sh && customFunction 2>&1 | grep -c '1 + 1'"
+command: "source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && customFunction 2>&1 | grep -c '1 + 1'"
 expect:
   operator: gt
   value: 0
 hint: "The helper is defined in .devcontainer/util/my_functions.sh - make sure the file exists."
-explanation: "The wand is warm - framework helpers are loaded. On to the cluster."
+explanation: "The wand is warm - framework helpers are loaded. On to the wizard itself."
 -->
 
 <div class="admonition info">
-<p class="admonition-title">No cluster yet - that is expected</p>
-<p>If you run <code>kubectl get nodes</code> right now you will get an error. Good. That
+<p class="admonition-title">No dtwiz yet - that is expected</p>
+<p>If you run <code>dtwiz</code> right now you will get <em>command not found</em>. Good. That
 is the whole point of Section 01.</p>
 </div>
 <div class="grid cards">
 <ul>
-<li><a href="../01-install-kubernetes/">Section 01: Install Kubernetes</a></li>
+<li><a href="../01-install-dtwiz/">Section 01: Install dtwiz</a></li>
 </ul>
 </div>
 
@@ -649,13 +672,13 @@ is the whole point of Section 01.</p>
         
         
           
-          <a href="../01-install-kubernetes/" class="md-footer__link md-footer__link--next" aria-label="Next: 01. Install Kubernetes">
+          <a href="../01-install-dtwiz/" class="md-footer__link md-footer__link--next" aria-label="Next: 01. Install dtwiz">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                01. Install Kubernetes
+                01. Install dtwiz
               </div>
             </div>
             <div class="md-footer__button md-icon">

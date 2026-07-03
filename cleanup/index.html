@@ -302,11 +302,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../01-install-kubernetes/" class="md-nav__link">
+      <a href="../01-install-dtwiz/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    01. Install Kubernetes
+    01. Install dtwiz
   </span>
   
 
@@ -322,11 +322,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../02-deploy-todo-app/" class="md-nav__link">
+      <a href="../02-connect-and-analyze/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    02. Deploy the Todo App
+    02. Connect & Analyze
   </span>
   
 
@@ -342,11 +342,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../03-observe-with-dynatrace/" class="md-nav__link">
+      <a href="../03-recommend/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    03. Observe with Dynatrace
+    03. Recommend
   </span>
   
 
@@ -362,11 +362,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../04-troubleshoot-and-recommend/" class="md-nav__link">
+      <a href="../04-demo-and-watch/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    04. Troubleshoot and Recommend
+    04. The Demo App & Watch
   </span>
   
 
@@ -462,8 +462,17 @@
 
 
 <h1 id="cleanup">Cleanup<a class="headerlink" href="#cleanup" title="Permanent link">#</a></h1>
-<p>Stop the training environment from the platform that started it.</p>
-<p>For local development, stop the Dev Container or any local port-forwarding sessions you started during the lab.</p>
+<p>Undo the wizardry in reverse order:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Stop and remove the schnitzel demo app</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>removeDtwizDemo
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># Optionally remove the dtwiz CLI itself</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>dtwiz<span class="w"> </span>uninstall<span class="w"> </span>self<span class="w"> </span>--yes
+</span></code></pre></div>
+<p>Then stop the training environment from the platform that started it
+(Enablement App <strong>Terminate</strong>, or delete the Codespace).</p>
+<p>For local development, stop the Dev Container or any local port-forwarding
+sessions you started during the lab.</p>
 
 
 

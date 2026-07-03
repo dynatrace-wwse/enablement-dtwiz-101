@@ -1,0 +1,44 @@
+{
+  "templateVersion": "1.0.0",
+  "id": "enablement-dtwiz-101-01-install-dtwiz",
+  "category": "CO",
+  "title": "Install dtwiz - Knowledge Check",
+  "description": "Confirm you understand how the dtwiz CLI is installed.",
+  "difficulty": "beginner",
+  "estimatedTime": 3,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "multiple-choice",
+      "title": "What does the install one-liner do?",
+      "content": "In Section 01 you ran `source <(curl -sSL .../scripts/install.sh)`. What does it do?",
+      "options": [
+        { "id": "a", "text": "Detects your platform, downloads the right dtwiz binary, and puts it on your PATH", "isCorrect": true, "explanation": "The official installer resolves OS + architecture and installs to /usr/local/bin or ~/bin." },
+        { "id": "b", "text": "Compiles dtwiz from Go sources on your machine", "isCorrect": false, "explanation": "Building from source is possible (make install) but the one-liner downloads a prebuilt release binary." },
+        { "id": "c", "text": "Installs a Dynatrace OneAgent", "isCorrect": false, "explanation": "dtwiz is the CLI that can LATER install ingestion methods like OneAgent - the installer only installs dtwiz itself." }
+      ],
+      "correctAnswer": "a",
+      "explanation": "The install script downloads the prebuilt dtwiz release for your platform and adds it to your PATH.",
+      "points": 10,
+      "hints": ["It finishes in seconds - too fast for a compile.", "Check where the binary landed with `command -v dtwiz`."]
+    },
+    {
+      "id": "q2",
+      "type": "multiple-choice",
+      "title": "Why source the installer?",
+      "content": "The recommended form is `source <(curl ...)` instead of `curl ... | sh`. Why?",
+      "options": [
+        { "id": "a", "text": "Sourcing makes dtwiz available immediately in the current terminal (PATH updated in-place)", "isCorrect": true, "explanation": "Piping to sh runs in a subshell - you would need a new terminal for PATH changes to apply." },
+        { "id": "b", "text": "Piping to sh is blocked by GitHub", "isCorrect": false, "explanation": "Piping works fine - it is listed as the alternative in the script header." },
+        { "id": "c", "text": "Sourcing verifies the download's checksum, piping does not", "isCorrect": false, "explanation": "The download behaves the same either way - the difference is only the shell the PATH export runs in." }
+      ],
+      "correctAnswer": "a",
+      "explanation": "source runs the installer in YOUR shell, so its PATH update takes effect immediately - no new terminal needed.",
+      "points": 10,
+      "hints": ["Think about which shell the `export PATH=...` runs in."]
+    }
+  ],
+  "maxScore": 20,
+  "tags": ["dtwiz", "cli", "install"],
+  "learningObjectives": ["Install the dtwiz CLI with the official installer."]
+}

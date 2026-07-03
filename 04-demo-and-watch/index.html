@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="../01-install-kubernetes/">
+        <link rel="prev" href="../03-recommend/">
       
       
-        <link rel="next" href="../03-observe-with-dynatrace/">
+        <link rel="next" href="../resources/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -20,7 +20,7 @@
     
     
       
-        <title>02. Deploy the Todo App - Dynatrace Enablement Lab: dtwiz 101</title>
+        <title>04. The Demo App & Watch - Dynatrace Enablement Lab: dtwiz 101</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#02-deploy-the-todo-app-summon-the-quest-board" class="md-skip">
+        <a href="#04-the-demo-app-watch-the-platform-tier" class="md-skip">
           Skip to content
         </a>
       
@@ -115,7 +115,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              02. Deploy the Todo App
+              04. The Demo App & Watch
             
           </span>
         </div>
@@ -304,11 +304,51 @@
   
   
     <li class="md-nav__item">
-      <a href="../01-install-kubernetes/" class="md-nav__link">
+      <a href="../01-install-dtwiz/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    01. Install Kubernetes
+    01. Install dtwiz
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-connect-and-analyze/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    02. Connect & Analyze
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-recommend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    03. Recommend
   </span>
   
 
@@ -337,7 +377,7 @@
           
   
   <span class="md-ellipsis">
-    02. Deploy the Todo App
+    04. The Demo App & Watch
   </span>
   
 
@@ -348,7 +388,7 @@
         
   
   <span class="md-ellipsis">
-    02. Deploy the Todo App
+    04. The Demo App & Watch
   </span>
   
 
@@ -370,27 +410,54 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#deploy-it" class="md-nav__link">
+  <a href="#the-platform-token" class="md-nav__link">
     <span class="md-ellipsis">
-      Deploy it
+      The platform token
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#generate-a-little-traffic" class="md-nav__link">
+  <a href="#step-1-deploy-the-schnitzel-demo-app" class="md-nav__link">
     <span class="md-ellipsis">
-      Generate a little traffic
+      Step 1 — Deploy the schnitzel demo app
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#verify-the-app-is-running" class="md-nav__link">
+  <a href="#step-2-watch-the-data-arrive" class="md-nav__link">
     <span class="md-ellipsis">
-      Verify the app is Running
+      Step 2 — Watch the data arrive
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-3-see-it-in-dynatrace" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 3 — See it in Dynatrace
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verify-the-demo-needs-the-platform-token" class="md-nav__link">
+    <span class="md-ellipsis">
+      Verify the demo (needs the platform token)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#knowledge-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      Knowledge check
     </span>
   </a>
   
@@ -400,46 +467,6 @@
   
 </nav>
       
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../03-observe-with-dynatrace/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    03. Observe with Dynatrace
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../04-troubleshoot-and-recommend/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    04. Troubleshoot and Recommend
-  </span>
-  
-
-      </a>
     </li>
   
 
@@ -511,27 +538,54 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#deploy-it" class="md-nav__link">
+  <a href="#the-platform-token" class="md-nav__link">
     <span class="md-ellipsis">
-      Deploy it
+      The platform token
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#generate-a-little-traffic" class="md-nav__link">
+  <a href="#step-1-deploy-the-schnitzel-demo-app" class="md-nav__link">
     <span class="md-ellipsis">
-      Generate a little traffic
+      Step 1 — Deploy the schnitzel demo app
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#verify-the-app-is-running" class="md-nav__link">
+  <a href="#step-2-watch-the-data-arrive" class="md-nav__link">
     <span class="md-ellipsis">
-      Verify the app is Running
+      Step 2 — Watch the data arrive
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#step-3-see-it-in-dynatrace" class="md-nav__link">
+    <span class="md-ellipsis">
+      Step 3 — See it in Dynatrace
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verify-the-demo-needs-the-platform-token" class="md-nav__link">
+    <span class="md-ellipsis">
+      Verify the demo (needs the platform token)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#knowledge-check" class="md-nav__link">
+    <span class="md-ellipsis">
+      Knowledge check
     </span>
   </a>
   
@@ -555,51 +609,93 @@
   
 
 
-<h1 id="02-deploy-the-todo-app-summon-the-quest-board">02. Deploy the Todo App (Summon the Quest Board)<a class="headerlink" href="#02-deploy-the-todo-app-summon-the-quest-board" title="Permanent link">#</a></h1>
-<p><img align="right" alt="A very serious enterprise Todo app" src="../img/dtwiz-todo.png" width="220" /></p>
-<p>Every wizard keeps a quest board. Ours is a humble <strong>Todo app</strong> - a Node.js API
-with a web UI, backed by a database, running on the cluster you just conjured. It
-is deliberately unremarkable, which makes it perfect for watching Dynatrace work.</p>
-<h2 id="deploy-it">Deploy it<a class="headerlink" href="#deploy-it" title="Permanent link">#</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">source</span><span class="w"> </span>.devcontainer/util/source_framework.sh
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>deployTodoWizardApp
+<h1 id="04-the-demo-app-watch-the-platform-tier">04. The Demo App &amp; Watch (The Platform Tier)<a class="headerlink" href="#04-the-demo-app-watch-the-platform-tier" title="Permanent link">#</a></h1>
+<p><img align="right" alt="Chaos, observed" src="../img/dtwiz-chaos.png" width="220" /></p>
+<p>Analysis and counsel are nice; <strong>data</strong> is better. dtwiz's two most satisfying
+commands — <code>install demo</code> and <code>watch</code> — talk to the Dynatrace <em>platform</em> APIs,
+so they need the stronger credential: a <strong>platform token</strong>.</p>
+<h2 id="the-platform-token">The platform token<a class="headerlink" href="#the-platform-token" title="Permanent link">#</a></h2>
+<p>Everything so far ran with the lab's Classic access token (<code>dt0c01</code>). The
+platform tier needs a <strong>platform token</strong> (<code>dt0s16.***</code>), which dtwiz reads
+from <code>DT_PLATFORM_TOKEN</code>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">DT_PLATFORM_TOKEN</span><span class="o">=</span>dt0s16.****<span class="w">   </span><span class="c1"># from your tenant, or your instructor</span>
 </span></code></pre></div>
-<p>This applies the Todo app manifests to your cluster and registers it behind the
-ingress. When it is ready, open the app UI at <code>http://localhost:8080</code> and add a
-quest or two (<code>Defeat the flaky test</code>, <code>Rename a variable</code>, the usual).</p>
-<h2 id="generate-a-little-traffic">Generate a little traffic<a class="headerlink" href="#generate-a-little-traffic" title="Permanent link">#</a></h2>
-<p>So Dynatrace has something to observe later, cast a tagged Todo via the API:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>generateWizardTraffic
+<p>You can create one in your tenant under <strong>Settings → Platform tokens</strong> (or
+ask your instructor for the training tenant's token). If you cannot get one,
+read along — the quiz at the end covers what matters.</p>
+<h2 id="step-1-deploy-the-schnitzel-demo-app">Step 1 — Deploy the schnitzel demo app<a class="headerlink" href="#step-1-deploy-the-schnitzel-demo-app" title="Permanent link">#</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">TMPDIR</span><span class="o">=</span><span class="nv">$PWD</span>/.dtwiz-tmp<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span><span class="nv">$TMPDIR</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>dtwiz<span class="w"> </span>install<span class="w"> </span>demo<span class="w"> </span>--experimental<span class="w"> </span>--yes
 </span></code></pre></div>
-<h2 id="verify-the-app-is-running">Verify the app is Running<a class="headerlink" href="#verify-the-app-is-running" title="Permanent link">#</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Why the TMPDIR line?</p>
+<p>dtwiz extracts the demo under <code>/tmp</code> and renames it into your current
+directory. In a Codespace those are <strong>different mounts</strong>, so the rename
+fails with <em>invalid cross-device link</em> — pointing <code>TMPDIR</code> at the
+workspace mount fixes it. (The <code>deployDtwizDemo</code> spell does this for you.)</p>
+</div>
+<ul>
+<li><code>--experimental</code> — the demo installer is an experimental feature; this flag
+  opts in.</li>
+<li><code>--yes</code> — skip the confirmation prompts (every dtwiz install supports it,
+  for automation).</li>
+</ul>
+<p>dtwiz downloads the <strong>schnitzel</strong> demo — a multi-service Python app — into
+<code>./schnitzel/</code>, instruments it with OpenTelemetry, starts it, and points the
+telemetry at your tenant. One command, an instrumented app.</p>
+<p>Watch the processes:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ps<span class="w"> </span>aux<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>schnitzel<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-v<span class="w"> </span>grep
+</span></code></pre></div>
+<h2 id="step-2-watch-the-data-arrive">Step 2 — Watch the data arrive<a class="headerlink" href="#step-2-watch-the-data-arrive" title="Permanent link">#</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>dtwiz<span class="w"> </span>watch
+</span></code></pre></div>
+<p><code>watch</code> live-tails your tenant for <strong>newly arriving data</strong> (services, logs,
+traces) — instant feedback that the instrumentation works. Give the schnitzel
+telemetry a minute or two, then see it roll in. Stop with <span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-c">C</kbd></span>.</p>
+<h2 id="step-3-see-it-in-dynatrace">Step 3 — See it in Dynatrace<a class="headerlink" href="#step-3-see-it-in-dynatrace" title="Permanent link">#</a></h2>
+<p>The schnitzel services appear in your tenant like any other instrumented app:</p>
+<p><a href="placeholder">dt-app|dynatrace.services|Open Services App</a></p>
+<h2 id="verify-the-demo-needs-the-platform-token">Verify the demo (needs the platform token)<a class="headerlink" href="#verify-the-demo-needs-the-platform-token" title="Permanent link">#</a></h2>
 <!-- LAB_QUESTION
 type: shell-verification
-question: "Verify the Todo app pods are Running"
-buttonText: "Check the Quest Board"
-command: "kubectl get pods -n todoapp --no-headers 2>/dev/null | grep -q Running"
+question: "Verify the schnitzel demo app is running (auto-passes if no platform token is available)"
+buttonText: "Check the Demo"
+command: "source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && verifyDemoOrSkip"
 expect:
   operator: exit-zero
-hint: "Run deployTodoWizardApp, then wait for the rollout and re-check."
-explanation: "The Todo app is Running on your cluster. The quest board is open for business."
+hint: "Export DT_PLATFORM_TOKEN, then run `dtwiz install demo --experimental --yes`. Without a platform token the check passes as 'skipped'."
+explanation: "Either the schnitzel demo is running and instrumented, or the platform-token tier was skipped - both complete this step."
 -->
 
 <!-- LAB_SOLUTION
 commands:
-  - deployTodoWizardApp
+  - installDtwiz
+  - deployDtwizDemo
 verify:
-  - source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && waitForTodoApp
+  - source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && verifyDemoOrSkip
 reveal: |
   ### The spell explained
-  `deployTodoWizardApp` wraps the framework's `deployTodoApp`, which applies the
-  Todo manifests, waits for the rollout, and registers the app behind the ingress
-  so it is reachable at `http://localhost:8080`.
+  `deployDtwizDemo` runs `dtwiz install demo --experimental --yes` when
+  `DT_PLATFORM_TOKEN` is set, and prints a clear skip message when it is not
+  (the demo installer and `dtwiz watch` are platform-API features - the lab's
+  Classic access token cannot drive them). `verifyDemoOrSkip` passes when the
+  schnitzel processes are up, or when the tier was skipped for lack of a
+  platform token.
 -->
 
-<!-- boundScenarioId: enablement-dtwiz-101-02-deploy-todo-app retake=false -->
+<h2 id="knowledge-check">Knowledge check<a class="headerlink" href="#knowledge-check" title="Permanent link">#</a></h2>
+<p>Answer the final questions to complete the training.</p>
+<!-- boundScenarioId: enablement-dtwiz-101-04-demo-and-watch retake=false -->
 
+<div class="admonition success">
+<p class="admonition-title">Training complete!</p>
+<p>You can now walk onto any system, summon dtwiz, analyze what runs there,
+read its counsel, deploy instrumentation, and prove the data arrives.
+Hasta la vista, blind spots.</p>
+</div>
 <div class="grid cards">
 <ul>
-<li><a href="../03-observe-with-dynatrace/">Section 03: Observe with Dynatrace</a></li>
+<li><a href="../cleanup/">Cleanup</a></li>
 </ul>
 </div>
 
@@ -639,7 +735,7 @@ reveal: |
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../01-install-kubernetes/" class="md-footer__link md-footer__link--prev" aria-label="Previous: 01. Install Kubernetes">
+          <a href="../03-recommend/" class="md-footer__link md-footer__link--prev" aria-label="Previous: 03. Recommend">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -649,20 +745,20 @@ reveal: |
                 Previous
               </span>
               <div class="md-ellipsis">
-                01. Install Kubernetes
+                03. Recommend
               </div>
             </div>
           </a>
         
         
           
-          <a href="../03-observe-with-dynatrace/" class="md-footer__link md-footer__link--next" aria-label="Next: 03. Observe with Dynatrace">
+          <a href="../resources/" class="md-footer__link md-footer__link--next" aria-label="Next: Resources">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                03. Observe with Dynatrace
+                Resources
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -707,7 +803,7 @@ reveal: |
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     if (typeof dynatrace !== 'undefined') {
-      dynatrace.sendBizEvent('page_load', {'page': "02. Deploy the Todo App"});
+      dynatrace.sendBizEvent('page_load', {'page': "04. The Demo App \u0026 Watch"});
     }
   });
 </script>

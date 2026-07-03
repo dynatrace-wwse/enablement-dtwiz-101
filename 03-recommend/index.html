@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="../00-getting-started/">
+        <link rel="prev" href="../02-connect-and-analyze/">
       
       
-        <link rel="next" href="../02-deploy-todo-app/">
+        <link rel="next" href="../04-demo-and-watch/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -20,7 +20,7 @@
     
     
       
-        <title>01. Install Kubernetes - Dynatrace Enablement Lab: dtwiz 101</title>
+        <title>03. Recommend - Dynatrace Enablement Lab: dtwiz 101</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#01-install-kubernetes-conjure-a-cluster" class="md-skip">
+        <a href="#03-recommend-the-wizards-counsel" class="md-skip">
           Skip to content
         </a>
       
@@ -115,7 +115,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              01. Install Kubernetes
+              03. Recommend
             
           </span>
         </div>
@@ -301,6 +301,46 @@
       
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-install-dtwiz/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    01. Install dtwiz
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-connect-and-analyze/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    02. Connect & Analyze
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -317,7 +357,7 @@
           
   
   <span class="md-ellipsis">
-    01. Install Kubernetes
+    03. Recommend
   </span>
   
 
@@ -328,7 +368,7 @@
         
   
   <span class="md-ellipsis">
-    01. Install Kubernetes
+    03. Recommend
   </span>
   
 
@@ -350,18 +390,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#cast-the-spell" class="md-nav__link">
+  <a href="#ask-for-recommendations" class="md-nav__link">
     <span class="md-ellipsis">
-      Cast the spell
+      Ask for recommendations
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#verify-the-cluster-is-ready" class="md-nav__link">
+  <a href="#verify-the-wizards-counsel" class="md-nav__link">
     <span class="md-ellipsis">
-      Verify the cluster is Ready
+      Verify the wizard's counsel
     </span>
   </a>
   
@@ -382,51 +422,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../02-deploy-todo-app/" class="md-nav__link">
+      <a href="../04-demo-and-watch/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    02. Deploy the Todo App
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../03-observe-with-dynatrace/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    03. Observe with Dynatrace
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../04-troubleshoot-and-recommend/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    04. Troubleshoot and Recommend
+    04. The Demo App & Watch
   </span>
   
 
@@ -502,18 +502,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#cast-the-spell" class="md-nav__link">
+  <a href="#ask-for-recommendations" class="md-nav__link">
     <span class="md-ellipsis">
-      Cast the spell
+      Ask for recommendations
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#verify-the-cluster-is-ready" class="md-nav__link">
+  <a href="#verify-the-wizards-counsel" class="md-nav__link">
     <span class="md-ellipsis">
-      Verify the cluster is Ready
+      Verify the wizard's counsel
     </span>
   </a>
   
@@ -537,56 +537,61 @@
   
 
 
-<h1 id="01-install-kubernetes-conjure-a-cluster">01. Install Kubernetes (Conjure a Cluster)<a class="headerlink" href="#01-install-kubernetes-conjure-a-cluster" title="Permanent link">#</a></h1>
-<p><img align="right" alt="Wizard summoning a cluster out of thin air" src="../img/dtwiz-conjure.png" width="220" /></p>
-<p>No cluster exists yet. A real wizard makes their own. You will install a
-lightweight Kubernetes distribution (<strong>k3d</strong> - Kubernetes in Docker) right here in
-your workshop.</p>
-<h2 id="cast-the-spell">Cast the spell<a class="headerlink" href="#cast-the-spell" title="Permanent link">#</a></h2>
-<p>In the <strong>Terminal</strong> tab, run:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">source</span><span class="w"> </span>.devcontainer/util/source_framework.sh
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>conjureCluster
+<h1 id="03-recommend-the-wizards-counsel">03. Recommend (The Wizard's Counsel)<a class="headerlink" href="#03-recommend-the-wizards-counsel" title="Permanent link">#</a></h1>
+<p><img align="right" alt="The wizard's counsel" src="../img/dtwiz-todo.png" width="220" /></p>
+<p>You installed the wand and analyzed the workshop. Time for the wizard's real
+party trick: telling you what to do next.</p>
+<h2 id="ask-for-recommendations">Ask for recommendations<a class="headerlink" href="#ask-for-recommendations" title="Permanent link">#</a></h2>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>dtwiz<span class="w"> </span>recommend<span class="w"> </span>--access-token<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$DT_OPERATOR_TOKEN</span><span class="s2">&quot;</span>
 </span></code></pre></div>
-<p><code>conjureCluster</code> starts a k3d cluster, wires up the ingress controller, and
-installs <code>k9s</code> (a delightful terminal UI for Kubernetes). Give it ~30 seconds.</p>
-<p>Then admire your handiwork:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>nodes
-</span></code></pre></div>
-<p>You should see one node with status <code>Ready</code>.</p>
+<p><code>recommend</code> combines the system analysis with your tenant's state and returns
+a <strong>ranked list of ingestion methods</strong> with the reasoning behind each: what to
+monitor, which method fits (OneAgent, Kubernetes Operator, OpenTelemetry,
+cloud integration), and what is already covered.</p>
+<p>Read the output: what does dtwiz suggest for your dev container?</p>
 <div class="admonition tip">
-<p class="admonition-title">k9s: the crystal ball</p>
-<p>Run <code>k9s</code> in the Terminal to watch pods live. Press <code>:</code> then type <code>pods</code>,
-and <code>0</code> to see all namespaces. Quit with <code>:q</code>.</p>
+<p class="admonition-title">The interactive shortcut</p>
+<p><code>dtwiz setup</code> chains everything — analyze → recommend → install — as one
+guided interactive wizard. Now that you know the individual spells, you
+know exactly what it does under the hood. On a customer machine, <code>setup</code>
+is usually where you start.</p>
 </div>
-<h2 id="verify-the-cluster-is-ready">Verify the cluster is Ready<a class="headerlink" href="#verify-the-cluster-is-ready" title="Permanent link">#</a></h2>
+<div class="admonition info">
+<p class="admonition-title">From counsel to action</p>
+<p>Each recommendation maps to an install command: <code>dtwiz install oneagent</code>,
+<code>dtwiz install kubernetes</code>, <code>dtwiz install otel</code>, <code>dtwiz install aws</code> …
+All of them support <code>--yes</code> for automation.</p>
+</div>
+<h2 id="verify-the-wizards-counsel">Verify the wizard's counsel<a class="headerlink" href="#verify-the-wizards-counsel" title="Permanent link">#</a></h2>
 <!-- LAB_QUESTION
 type: shell-verification
-question: "Verify the Kubernetes node is Ready"
-buttonText: "Check the Cluster"
-command: "kubectl get nodes --no-headers 2>/dev/null | grep -q ' Ready'"
+question: "Verify dtwiz recommend produces ingestion recommendations"
+buttonText: "Ask the Wizard"
+command: "source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && isRecommendWorking"
 expect:
   operator: exit-zero
-hint: "Run conjureCluster in the Terminal, then wait ~30 seconds and re-check."
-explanation: "Your cluster node is Ready. You have conjured Kubernetes from nothing. Show-off."
+hint: "Install dtwiz first (Section 01), then run `dtwiz recommend --access-token \"$DT_OPERATOR_TOKEN\"`."
+explanation: "dtwiz produced ranked ingestion recommendations for this system."
 -->
 
 <!-- LAB_SOLUTION
 commands:
-  - conjureCluster
+  - installDtwiz
+  - dtwizRecommend
 verify:
-  - source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && waitForClusterReady
+  - source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && isRecommendWorking
 reveal: |
   ### The spell explained
-  `conjureCluster` calls the framework's `startK3dCluster` (creates or attaches a
-  k3d cluster + ingress) and `installK9s`. Once the node reports `Ready`, the
-  cluster is usable and Section 01 is complete.
+  `dtwizRecommend` runs `dtwiz recommend --access-token "$DT_OPERATOR_TOKEN"`.
+  The verification checks that a ranked recommendation list is produced —
+  proof that dtwiz can combine the local analysis with your tenant's state.
 -->
 
-<!-- boundScenarioId: enablement-dtwiz-101-01-install-kubernetes retake=false -->
+<!-- boundScenarioId: enablement-dtwiz-101-03-recommend retake=false -->
 
 <div class="grid cards">
 <ul>
-<li><a href="../02-deploy-todo-app/">Section 02: Deploy the Todo App</a></li>
+<li><a href="../04-demo-and-watch/">Section 04: The Demo App &amp; Watch</a></li>
 </ul>
 </div>
 
@@ -626,7 +631,7 @@ reveal: |
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../00-getting-started/" class="md-footer__link md-footer__link--prev" aria-label="Previous: 00. Getting Started">
+          <a href="../02-connect-and-analyze/" class="md-footer__link md-footer__link--prev" aria-label="Previous: 02. Connect &amp; Analyze">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -636,20 +641,20 @@ reveal: |
                 Previous
               </span>
               <div class="md-ellipsis">
-                00. Getting Started
+                02. Connect & Analyze
               </div>
             </div>
           </a>
         
         
           
-          <a href="../02-deploy-todo-app/" class="md-footer__link md-footer__link--next" aria-label="Next: 02. Deploy the Todo App">
+          <a href="../04-demo-and-watch/" class="md-footer__link md-footer__link--next" aria-label="Next: 04. The Demo App &amp; Watch">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                02. Deploy the Todo App
+                04. The Demo App & Watch
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -694,7 +699,7 @@ reveal: |
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     if (typeof dynatrace !== 'undefined') {
-      dynatrace.sendBizEvent('page_load', {'page': "01. Install Kubernetes"});
+      dynatrace.sendBizEvent('page_load', {'page': "03. Recommend"});
     }
   });
 </script>

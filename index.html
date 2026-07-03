@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#dtwiz-101-the-kubernetes-observability-spellbook" class="md-skip">
+        <a href="#dtwiz-101-one-wizard-to-instrument-them-all" class="md-skip">
           Skip to content
         </a>
       
@@ -312,11 +312,11 @@
   
   
     <li class="md-nav__item">
-      <a href="01-install-kubernetes/" class="md-nav__link">
+      <a href="01-install-dtwiz/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    01. Install Kubernetes
+    01. Install dtwiz
   </span>
   
 
@@ -332,11 +332,11 @@
   
   
     <li class="md-nav__item">
-      <a href="02-deploy-todo-app/" class="md-nav__link">
+      <a href="02-connect-and-analyze/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    02. Deploy the Todo App
+    02. Connect & Analyze
   </span>
   
 
@@ -352,11 +352,11 @@
   
   
     <li class="md-nav__item">
-      <a href="03-observe-with-dynatrace/" class="md-nav__link">
+      <a href="03-recommend/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    03. Observe with Dynatrace
+    03. Recommend
   </span>
   
 
@@ -372,11 +372,11 @@
   
   
     <li class="md-nav__item">
-      <a href="04-troubleshoot-and-recommend/" class="md-nav__link">
+      <a href="04-demo-and-watch/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    04. Troubleshoot and Recommend
+    04. The Demo App & Watch
   </span>
   
 
@@ -461,15 +461,17 @@
   
 
 
-<h1 id="dtwiz-101-the-kubernetes-observability-spellbook">DTWiz 101: The Kubernetes Observability Spellbook<a class="headerlink" href="#dtwiz-101-the-kubernetes-observability-spellbook" title="Permanent link">#</a></h1>
+<h1 id="dtwiz-101-one-wizard-to-instrument-them-all">DTWiz 101: One Wizard to Instrument Them All<a class="headerlink" href="#dtwiz-101-one-wizard-to-instrument-them-all" title="Permanent link">#</a></h1>
 <blockquote>
-<p>In which a mildly over-caffeinated wizard teaches you to conjure a Kubernetes
-cluster, summon a Todo app, and make Dynatrace see all - then breaks
-everything on purpose so you can fix it. Standard wizard behaviour.</p>
+<p>In which a mildly over-caffeinated wizard hands you their favourite wand —
+<strong>dtwiz</strong>, the Dynatrace Ingest CLI — and teaches you to analyze any
+environment, deploy a demo app, and let Dynatrace see all. No slides, no
+hand-waving: a real terminal, a real tenant, one very opinionated CLI.</p>
 </blockquote>
-<p>Welcome, apprentice. You are about to learn the ancient art of <em>observability</em>
-the hands-on way: no slides, no hand-waving, just a real cluster you build
-yourself and a real app you watch Dynatrace watch.</p>
+<p>Welcome, apprentice. <a href="https://github.com/dynatrace-oss/dtwiz">dtwiz</a> analyzes
+a system and figures out the <strong>best way to get Dynatrace observability into
+it</strong> — OneAgent, Kubernetes Operator, OpenTelemetry, cloud integrations — then
+installs it for you. In this lab you learn to wield it end to end.</p>
 <p><img alt="DTWiz, your questionably qualified guide" src="img/dtwiz-wizard.png" width="260" />
 /// caption
 DTWiz: 100% confidence, 60% documentation.
@@ -478,33 +480,41 @@ DTWiz: 100% confidence, 60% documentation.
 <thead>
 <tr>
 <th>You will learn to</th>
-<th>Spell used</th>
+<th>Command used</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Install Kubernetes from scratch (nothing is pre-baked)</td>
-<td><code>conjureCluster</code></td>
+<td>Install the dtwiz CLI from scratch</td>
+<td><code>installDtwiz</code> (or the one-liner)</td>
 </tr>
 <tr>
-<td>Deploy a Todo app onto your cluster</td>
-<td><code>deployTodoWizardApp</code></td>
+<td>Check the connection to your tenant</td>
+<td><code>dtwiz status</code></td>
 </tr>
 <tr>
-<td>Make Dynatrace observe the app end to end</td>
-<td><code>summonDynatrace</code></td>
+<td>Analyze what a system runs</td>
+<td><code>dtwiz analyze</code></td>
 </tr>
 <tr>
-<td>Diagnose and fix a deliberately broken service</td>
-<td><code>dispelChaos</code></td>
+<td>Get ranked ingestion recommendations</td>
+<td><code>dtwiz recommend</code></td>
+</tr>
+<tr>
+<td>Deploy &amp; instrument the schnitzel demo app</td>
+<td><code>dtwiz install demo</code></td>
+</tr>
+<tr>
+<td>Watch data arrive in Dynatrace</td>
+<td><code>dtwiz watch</code></td>
 </tr>
 </tbody>
 </table>
 <div class="admonition tip">
 <p class="admonition-title">Why this lab is different</p>
-<p>Most labs hand you a running cluster. Not here. You will <strong>install
-Kubernetes yourself</strong> in Section 01 - because a wizard who cannot conjure
-their own cluster is just a person in a pointy hat.</p>
+<p>Most labs pre-install everything. Not here. You will <strong>install dtwiz
+yourself</strong> in Section 01 — because a wizard who cannot summon their own
+wand is just a person in a pointy hat.</p>
 </div>
 <div class="grid cards">
 <ul>
