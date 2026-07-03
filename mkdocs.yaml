@@ -6,10 +6,10 @@ repo_url: "https://github.com/dynatrace-wwse/enablement-dtwiz-101"
 nav:
   - "Welcome": index.md
   - "00. Getting Started": 00-getting-started.md
-  - "01. Install Kubernetes": 01-install-kubernetes.md
-  - "02. Deploy the Todo App": 02-deploy-todo-app.md
-  - "03. Observe with Dynatrace": 03-observe-with-dynatrace.md
-  - "04. Troubleshoot and Recommend": 04-troubleshoot-and-recommend.md
+  - "01. Install dtwiz": 01-install-dtwiz.md
+  - "02. Connect & Analyze": 02-connect-and-analyze.md
+  - "03. Recommend": 03-recommend.md
+  - "04. The Demo App & Watch": 04-demo-and-watch.md
   - "Resources": resources.md
   - "Cleanup": cleanup.md
 

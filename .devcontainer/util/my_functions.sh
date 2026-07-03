@@ -3,10 +3,11 @@
 #   DTWiz 101 - Custom lab functions ("spells")
 # ----------------------------------------------------------------------
 #   Sourced into every terminal session, so functions must `return`,
-#   never `exit`. These wrap the shared codespaces-framework helpers with
-#   a DTWiz-themed name and add bounded wait/verify helpers so each lab
-#   step can be verified right after the previous one without racing the
-#   asynchronous Kubernetes rollout (same pattern as Kubernetes 101).
+#   never `exit`. This lab teaches the dtwiz CLI (dynatrace-oss/dtwiz):
+#   install it, analyze the environment, deploy the schnitzel demo app,
+#   and read dtwiz's recommendations. Each section has a solution spell
+#   plus a bounded verify helper so the LAB_SOLUTION runner can solve and
+#   check a step without racing asynchronous work.
 # ======================================================================
 
 # --- Sample helper kept from the template (used by the getting-started check).
@@ -15,186 +16,139 @@ customFunction(){
   printInfo "1 + 1 = $(( 1 + 1 ))"
 }
 
-# ----------------------------------------------------------------------
-# Section 01 - Install Kubernetes (the wizard conjures a cluster)
-# ----------------------------------------------------------------------
-# Installs a local k3d cluster + ingress + k9s. This is the lab's
-# "install Kubernetes" step - the cluster is NOT pre-started by the
-# devcontainer, the learner (or the LAB_SOLUTION) casts this spell.
-conjureCluster(){
-  printInfoSection "Conjuring a Kubernetes cluster with k3d"
-  startK3dCluster
-  installK9s
-  printInfo "The cluster has materialised. Behold: kubectl get nodes"
-}
+DTWIZ_INSTALL_URL="https://raw.githubusercontent.com/dynatrace-oss/dtwiz/main/scripts/install.sh"
 
-# Cluster node reaches Ready (bounded wait).
-waitForClusterReady(){
-  printInfoSection "Waiting for the cluster node to be Ready"
-  local i=0
-  while [ "$i" -lt 24 ]; do
-    [ "$(kubectl get nodes --no-headers 2>/dev/null | grep -c ' Ready')" -gt 0 ] && { printInfo "node Ready"; return 0; }
-    i=$((i + 1)); printInfo "node not Ready yet ($i/24), waiting 5s"; sleep 5
-  done
-  printError "Cluster node not Ready in time"; return 1
-}
-
-# ----------------------------------------------------------------------
-# Section 02 - Deploy the Todo app (the wizard's questgiver board)
-# ----------------------------------------------------------------------
-deployTodoWizardApp(){
-  printInfoSection "Deploying the Todo app onto the freshly conjured cluster"
-  deployTodoApp
-}
-
-# Todo app pods reach Running.
-waitForTodoApp(){
-  printInfoSection "Waiting for the Todo app pods to be Running"
-  local i=0
-  while [ "$i" -lt 30 ]; do
-    [ "$(kubectl get pods -n todoapp --no-headers 2>/dev/null | grep -c Running)" -gt 0 ] && { printInfo "todoapp Running"; return 0; }
-    i=$((i + 1)); printInfo "todoapp not Running yet ($i/30), waiting 5s"; sleep 5
-  done
-  printError "todoapp pods not Running in time"; return 1
-}
-
-# Create a uniquely-tagged Todo via the app API so its log is findable in Grail.
-DTWIZ_PROBE_TAG="DTWIZ101PROBE"
-generateWizardTraffic(){
-  local nonce="${DTWIZ_PROBE_TAG}-$(date +%s)-${RANDOM}"
-  local url="http://localhost:${K3D_LB_HTTP_PORT:-80}"
-  local host="todoapp.$(detectHostname)"
-  printInfoSection "Casting a Todo into the app so Dynatrace has something to watch"
-  printInfo "tag: $nonce"
-  local i=0 ok=1
-  while [ "$i" -lt 30 ]; do
-    if curl -sf -o /dev/null -H "Host: $host" "$url/todos"; then ok=0; break; fi
-    i=$((i + 1)); printInfo "app endpoint not ready ($i/30), waiting 5s"; sleep 5
-  done
-  [ "$ok" -ne 0 ] && { printError "todoapp HTTP endpoint not reachable"; return 1; }
-  curl -s -H "Host: $host" -X POST "$url/todos" -H "Content-Type: application/json" \
-    -d "{\"title\":\"$nonce\",\"completed\":false}" | grep -q '"status":"ok"' \
-    && { printInfo "Tagged Todo created - it should reach Grail within ~2 min"; return 0; }
-  printError "Failed to create tagged Todo"; return 1
-}
-
-# ----------------------------------------------------------------------
-# Section 03 - Observe with Dynatrace (the all-seeing eye)
-# ----------------------------------------------------------------------
-summonDynatrace(){
-  printInfoSection "Summoning the Dynatrace Operator + applicationMonitoring for the Todo app"
-  dynatraceEvalReadSaveCredentials
-  dynatraceDeployOperator
-
-  # IMPORTANT: this repo is named "Enablement-DTWiz-101" (mixed case). The
-  # framework derives the DynaKube name and its token secret from RepositoryName,
-  # but Kubernetes resource names must be lowercase RFC-1123 — so the framework's
-  # deployApplicationMonitoring produces an INVALID DynaKube/secret name that the
-  # operator's validating webhook silently rejects (no DynaKube -> no injection).
-  # Create our own lowercase-named token secret + DynaKube instead. The injection
-  # namespaceSelector lives at spec.oneAgent.applicationMonitoring.namespaceSelector
-  # in v1beta6; scope it to the todoapp namespace.
-  printInfo "Creating the Dynatrace token secret (lowercase name)"
-  kubectl -n dynatrace create secret generic dtwiz-tokens \
-    --from-literal="apiToken=$DT_OPERATOR_TOKEN" \
-    --from-literal="dataIngestToken=$DT_INGEST_TOKEN" \
-    --dry-run=client -o yaml | kubectl apply -f -
-
-  printInfo "Waiting for the Dynatrace mutating webhook to be Ready"
-  kubectl -n dynatrace wait pod \
-    --for=condition=ready \
-    --selector=app.kubernetes.io/name=dynatrace-operator,app.kubernetes.io/component=webhook \
-    --timeout=180s 2>/dev/null || true
-
-  printInfo "Applying the applicationMonitoring DynaKube (scoped to todoapp)"
-  kubectl apply -f - <<DTWIZ_DK
-apiVersion: dynatrace.com/v1beta6
-kind: DynaKube
-metadata:
-  name: dtwiz-101
-  namespace: dynatrace
-spec:
-  apiUrl: ${DT_TENANT}/api
-  tokens: dtwiz-tokens
-  oneAgent:
-    applicationMonitoring:
-      namespaceSelector:
-        matchLabels:
-          kubernetes.io/metadata.name: todoapp
-DTWIZ_DK
-
-  # Injection readiness lags the DynaKube apply: restart the Todo app and RETRY
-  # until the injection annotation appears (webhook/CSI take a moment to be ready).
-  local i=0
-  while [ "$i" -lt 5 ]; do
-    printInfo "Restarting the Todo app so OneAgent can inject (attempt $((i + 1))/5)"
-    kubectl rollout restart deployment -n todoapp
-    kubectl rollout status deployment -n todoapp --timeout=120s
-    if isOneAgentInjected; then
-      printInfo "OneAgent injected into the Todo app"
-      return 0
-    fi
-    i=$((i + 1)); printInfo "not injected yet, waiting 20s before retrying restart"; sleep 20
-  done
-  printWarn "OneAgent injection not detected after retries"
+# Make dtwiz visible in non-interactive shells too: the installer may land in
+# ~/bin, which login shells add to PATH but plain `zsh -c` does not.
+_dtwizPath(){
+  command -v dtwiz >/dev/null 2>&1 && return 0
+  [ -x "$HOME/bin/dtwiz" ] && export PATH="$HOME/bin:$PATH" && return 0
+  [ -x /usr/local/bin/dtwiz ] && return 0
   return 1
 }
 
-# Dynatrace Operator pod Running.
-waitForOperatorReady(){
-  printInfoSection "Waiting for the Dynatrace Operator pod to be Running"
-  local i=0
-  while [ "$i" -lt 36 ]; do
-    kubectl get pods -n dynatrace --no-headers 2>/dev/null | grep -E 'operator' | grep -q Running && { printInfo "operator Running"; return 0; }
-    i=$((i + 1)); printInfo "operator not Running yet ($i/36), waiting 5s"; sleep 5
-  done
-  printError "Dynatrace Operator pod not Running in time"; return 1
+# ----------------------------------------------------------------------
+# Section 01 - Install the dtwiz CLI
+# ----------------------------------------------------------------------
+installDtwiz(){
+  printInfoSection "Summoning the dtwiz CLI (dynatrace-oss/dtwiz)"
+  if _dtwizPath; then
+    printInfo "dtwiz already installed: $(dtwiz version 2>/dev/null | head -1)"
+    return 0
+  fi
+  curl -sSL "$DTWIZ_INSTALL_URL" | sh
+  _dtwizPath || { printError "dtwiz not found after install"; return 1; }
+  printInfo "dtwiz installed: $(dtwiz version 2>/dev/null | head -1)"
 }
 
-# Single-shot predicate: is OneAgent injected into the Todo app pods right now?
-# Used by the section-03 shell-verification (kept quick so the driver's baseline
-# phase does not burn a long wait before anything is deployed). The LAB_SOLUTION
-# verify uses the bounded-wait waitForOneAgentInjected instead.
-isOneAgentInjected(){
-  kubectl get pods -n todoapp -o jsonpath='{.items[*].metadata.annotations.oneagent\.dynatrace\.com/injected}' 2>/dev/null | tr ' ' '\n' | grep -q true
+isDtwizInstalled(){
+  _dtwizPath || { printError "dtwiz is not installed - run installDtwiz (or the install one-liner)"; return 1; }
+  dtwiz version
 }
 
-# OneAgent injection annotation present on Todo app pods.
-waitForOneAgentInjected(){
-  printInfoSection "Waiting for the OneAgent injection annotation on todoapp pods"
+# ----------------------------------------------------------------------
+# Section 02 - Connect & analyze
+# ----------------------------------------------------------------------
+# The lab injects DT_ENVIRONMENT + DT_OPERATOR_TOKEN (a Classic API token).
+# dtwiz reads DT_ENVIRONMENT from the environment; the Classic token must be
+# passed explicitly via --access-token (dtwiz refuses to read it from env on
+# purpose). A platform token (dt0s16) unlocks `dtwiz watch` - see Section 04.
+dtwizConnect(){
+  isDtwizInstalled >/dev/null || return 1
+  printInfoSection "Checking the connection to $DT_ENVIRONMENT"
+  dtwiz status --access-token "$DT_OPERATOR_TOKEN"
+}
+
+analyzeSystem(){
+  isDtwizInstalled >/dev/null || return 1
+  printInfoSection "dtwiz gazes upon the system (dtwiz analyze)"
+  dtwiz analyze
+}
+
+# The analyze output must at least detect the container's Docker runtime.
+isAnalyzeWorking(){
+  isDtwizInstalled >/dev/null || return 1
+  dtwiz analyze 2>&1 | grep -qi "docker" \
+    && { printInfo "dtwiz analyze detects the environment"; return 0; } \
+    || { printError "dtwiz analyze did not report the environment"; return 1; }
+}
+
+# ----------------------------------------------------------------------
+# Section 04 - Deploy the schnitzel demo app (platform-token tier)
+# ----------------------------------------------------------------------
+# `dtwiz install demo` and `dtwiz watch` use the Dynatrace platform APIs, so
+# they require a platform token (dt0s16) in DT_PLATFORM_TOKEN. The lab only
+# injects a Classic access token - the demo tier is skipped cleanly when the
+# platform token is absent so the training stays completable everywhere.
+deployDtwizDemo(){
+  isDtwizInstalled >/dev/null || return 1
+  if [ -z "${DT_PLATFORM_TOKEN:-}" ]; then
+    printWarn "DT_PLATFORM_TOKEN is not set - the demo installer needs a platform token (dt0s16)."
+    printInfo "Export one (Settings -> Platform tokens in your tenant) and re-run, or skip this tier."
+    return 0
+  fi
+  printInfoSection "Deploying the schnitzel demo app (dtwiz install demo)"
+  # dtwiz extracts the demo under $TMPDIR and rename()s it into the current
+  # directory - in Codespaces /tmp and /workspaces are different mounts, so the
+  # rename fails with "invalid cross-device link" unless TMPDIR shares the
+  # workspace mount. stdin from /dev/null skips the interactive watch screen.
+  mkdir -p "${REPO_PATH:-.}/.dtwiz-tmp"
+  TMPDIR="${REPO_PATH:-.}/.dtwiz-tmp" dtwiz install demo --experimental --yes < /dev/null
+}
+
+# Demo processes alive? (bounded wait - the app takes a moment to boot).
+waitForDemoRunning(){
+  printInfoSection "Waiting for the schnitzel demo app processes"
   local i=0
   while [ "$i" -lt 24 ]; do
-    if kubectl get pods -n todoapp -o jsonpath='{.items[*].metadata.annotations.oneagent\.dynatrace\.com/injected}' 2>/dev/null | tr ' ' '\n' | grep -q true; then
-      printInfo "OneAgent injected"; return 0
+    if pgrep -f "schnitzel" >/dev/null 2>&1; then
+      printInfo "schnitzel demo is running"; return 0
     fi
-    i=$((i + 1)); printInfo "not injected yet ($i/24), waiting 10s"; sleep 10
+    i=$((i + 1)); printInfo "demo not up yet ($i/24), waiting 5s"; sleep 5
   done
-  printError "OneAgent injection annotation not present in time"; return 1
+  printError "schnitzel demo processes not found in time"; return 1
+}
+
+isDemoRunning(){
+  pgrep -f "schnitzel" >/dev/null 2>&1 \
+    && { printInfo "schnitzel demo is running"; return 0; } \
+    || { printError "schnitzel demo is not running - run deployDtwizDemo"; return 1; }
+}
+
+# Section-04 check: demo running, OR cleanly skipped because no platform token
+# is available in this environment (keeps the lab completable with only the
+# injected Classic access token).
+verifyDemoOrSkip(){
+  if [ -z "${DT_PLATFORM_TOKEN:-}" ]; then
+    printInfo "No DT_PLATFORM_TOKEN in this environment - demo tier skipped (OK)."
+    return 0
+  fi
+  waitForDemoRunning
 }
 
 # ----------------------------------------------------------------------
-# Section 04 - Troubleshoot & recommend (the wizard breaks it on purpose)
+# Section 04 - Recommend, watch & status
 # ----------------------------------------------------------------------
-# Inject a fault: scale the Todo app to zero replicas. Dynatrace will show
-# the service going dark - the learner diagnoses and fixes it.
-castChaosSpell(){
-  printInfoSection "Casting a Chaos Spell: scaling todoapp to 0 replicas (oops)"
-  kubectl scale deployment todoapp -n todoapp --replicas=0
-  printInfo "The Todo app has vanished. Watch it disappear in Dynatrace, then dispel the chaos."
+dtwizRecommend(){
+  isDtwizInstalled >/dev/null || return 1
+  printInfoSection "Asking the wizard for advice (dtwiz recommend)"
+  dtwiz recommend --access-token "$DT_OPERATOR_TOKEN"
 }
 
-# Detect the fault (used by a 'reproduce' shell-verification): exit 0 when broken.
-isTodoAppDown(){
-  local running
-  running=$(kubectl get pods -n todoapp --no-headers 2>/dev/null | grep -c Running)
-  if [ "${running:-0}" -eq 0 ]; then printInfo "Confirmed: todoapp has 0 Running pods (chaos in effect)"; return 0; fi
-  printInfo "todoapp still has $running Running pod(s)"; return 1
+isRecommendWorking(){
+  isDtwizInstalled >/dev/null || return 1
+  dtwiz recommend --access-token "$DT_OPERATOR_TOKEN" 2>&1 | grep -qi "recommend" \
+    && { printInfo "dtwiz recommend produced recommendations"; return 0; } \
+    || { printError "dtwiz recommend produced no output"; return 1; }
 }
 
-# The fix: scale back up and wait for health.
-dispelChaos(){
-  printInfoSection "Dispelling the Chaos Spell: restoring todoapp to 1 replica"
-  kubectl scale deployment todoapp -n todoapp --replicas=1
-  kubectl rollout status deployment/todoapp -n todoapp --timeout=120s
-  waitForTodoApp
+# ----------------------------------------------------------------------
+# Cleanup
+# ----------------------------------------------------------------------
+removeDtwizDemo(){
+  isDtwizInstalled >/dev/null || return 1
+  printInfoSection "Uninstalling the schnitzel demo app"
+  dtwiz uninstall demo --experimental --yes 2>/dev/null || true
+  pkill -f "schnitzel" 2>/dev/null || true
+  printInfo "Demo removed"
 }

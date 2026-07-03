@@ -1,0 +1,59 @@
+{
+  "templateVersion": "1.0.0",
+  "id": "enablement-dtwiz-101-04-demo-and-watch",
+  "category": "CO",
+  "title": "Demo & Watch - Knowledge Check",
+  "description": "Confirm you understand the platform-token tier: install demo and watch.",
+  "difficulty": "beginner",
+  "estimatedTime": 4,
+  "questions": [
+    {
+      "id": "q1",
+      "type": "multiple-choice",
+      "title": "What does `dtwiz install demo` deploy?",
+      "content": "What does `dtwiz install demo --experimental --yes` set up?",
+      "options": [
+        { "id": "a", "text": "The schnitzel demo app (a multi-service Python app), instrumented with OpenTelemetry and sending telemetry to your tenant", "isCorrect": true, "explanation": "The demo installer downloads schnitzel into ./schnitzel/, instruments it and starts it." },
+        { "id": "b", "text": "A Kubernetes cluster running a Todo app", "isCorrect": false, "explanation": "No Kubernetes involved - the demo runs as local Python processes." },
+        { "id": "c", "text": "A Dynatrace OneAgent on the container host", "isCorrect": false, "explanation": "That would be `dtwiz install oneagent` - the demo uses OpenTelemetry instead." }
+      ],
+      "correctAnswer": "a",
+      "explanation": "install demo = download schnitzel + OpenTelemetry instrumentation + start, pointed at your DT_ENVIRONMENT.",
+      "points": 10,
+      "hints": ["Look at the ./schnitzel/ directory it creates.", "Which signal type arrives - OneAgent traces or OTel spans?"]
+    },
+    {
+      "id": "q2",
+      "type": "multiple-choice",
+      "title": "Why do demo and watch need a different token?",
+      "content": "`dtwiz install demo` and `dtwiz watch` refused to run with the lab's access token. Why?",
+      "options": [
+        { "id": "a", "text": "They use the Dynatrace platform APIs, which require a platform token (dt0s16) via DT_PLATFORM_TOKEN", "isCorrect": true, "explanation": "Classic dt0c01 tokens cover the classic APIs (status, recommend, most installs) but not the platform data APIs." },
+        { "id": "b", "text": "They need GitHub credentials", "isCorrect": false, "explanation": "GitHub is only involved when downloading dtwiz itself." },
+        { "id": "c", "text": "The access token had expired", "isCorrect": false, "explanation": "The same token kept working for recommend - it is a token TYPE difference, not expiry." }
+      ],
+      "correctAnswer": "a",
+      "explanation": "demo + watch talk to platform APIs - that requires DT_PLATFORM_TOKEN (dt0s16). dtwiz tells you exactly this when the token is missing.",
+      "points": 10,
+      "hints": ["Remember the token-type info box in Section 02."]
+    },
+    {
+      "id": "q3",
+      "type": "multiple-choice",
+      "title": "Why the --experimental flag?",
+      "content": "Why does the demo install require `--experimental`?",
+      "options": [
+        { "id": "a", "text": "The demo installer is an experimental dtwiz feature - the flag is an explicit opt-in", "isCorrect": true, "explanation": "Experimental features (demo install, Docker/OTel-update recommendations) are gated behind the flag." },
+        { "id": "b", "text": "It enables experimental Dynatrace tenant features", "isCorrect": false, "explanation": "The flag changes nothing on the tenant - it gates dtwiz's own experimental functionality." },
+        { "id": "c", "text": "It skips confirmation prompts", "isCorrect": false, "explanation": "That is --yes." }
+      ],
+      "correctAnswer": "a",
+      "explanation": "--experimental opts into dtwiz's experimental features; --yes handles the prompts.",
+      "points": 10,
+      "hints": ["Two flags, two jobs."]
+    }
+  ],
+  "maxScore": 30,
+  "tags": ["dtwiz", "demo", "watch", "platform-token"],
+  "learningObjectives": ["Deploy the schnitzel demo.", "Know which token unlocks the platform tier.", "Use --experimental and --yes correctly."]
+}
