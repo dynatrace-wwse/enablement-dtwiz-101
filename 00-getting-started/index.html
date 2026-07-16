@@ -431,6 +431,26 @@
   
   
     <li class="md-nav__item">
+      <a href="../03b-install-kubernetes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    03b. Install on Kubernetes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../04-demo-and-watch/" class="md-nav__link">
         
   
@@ -582,13 +602,17 @@ is on purpose. You will summon it in Section 01.</p>
 <p>The <strong>Terminal</strong> tab is your wand. Everything in this lab is typed there — or
 run for you by clicking a check button.</p>
 <h2 id="your-credentials">Your credentials<a class="headerlink" href="#your-credentials" title="Permanent link">#</a></h2>
-<p>The lab injected two environment variables you will use throughout:</p>
+<p>The lab injected the two environment variables dtwiz needs — and dtwiz reads
+<strong>both automatically</strong>, so you never type a token on the command line:</p>
 <ul>
-<li><code>DT_ENVIRONMENT</code> — your Dynatrace tenant URL. dtwiz reads it automatically.</li>
-<li><code>DT_OPERATOR_TOKEN</code> — a Classic API token (<code>dt0c01.***</code>). dtwiz accepts it
-  via the <code>--access-token</code> flag — <strong>never</strong> from an environment variable
-  (that's a dtwiz safety choice, so you always know which credential you use).</li>
+<li><code>DT_ENVIRONMENT</code> — your Dynatrace tenant URL.</li>
+<li><code>DT_PLATFORM_TOKEN</code> — a modern <strong>platform token</strong> (<code>dt0s16.***</code>).</li>
 </ul>
+<p>Because dtwiz picks both up straight from the environment, <code>dtwiz status</code>,
+<code>dtwiz analyze</code>, <code>dtwiz recommend</code>, <code>dtwiz install …</code> and <code>dtwiz watch</code> all
+just work — <strong>no <code>--access-token</code> flag, nothing to export by hand</strong>. Platform
+tokens are the standard dtwiz is built around; the old classic <code>dt0c01</code> API
+tokens are being deprecated.</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">echo</span><span class="w"> </span><span class="nv">$DT_ENVIRONMENT</span>
 </span></code></pre></div>
 <h2 id="warm-up-incantation">Warm-up incantation<a class="headerlink" href="#warm-up-incantation" title="Permanent link">#</a></h2>

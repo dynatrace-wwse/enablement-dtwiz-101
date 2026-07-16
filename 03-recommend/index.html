@@ -12,7 +12,7 @@
         <link rel="prev" href="../02-connect-and-analyze/">
       
       
-        <link rel="next" href="../04-demo-and-watch/">
+        <link rel="next" href="../03b-install-kubernetes/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -407,10 +407,39 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#prove-you-asked-the-wizard-yourself" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prove you asked the wizard yourself
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
       
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03b-install-kubernetes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    03b. Install on Kubernetes
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -519,6 +548,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#prove-you-asked-the-wizard-yourself" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prove you asked the wizard yourself
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -542,7 +580,9 @@
 <p>You installed the wand and analyzed the workshop. Time for the wizard's real
 party trick: telling you what to do next.</p>
 <h2 id="ask-for-recommendations">Ask for recommendations<a class="headerlink" href="#ask-for-recommendations" title="Permanent link">#</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>dtwiz<span class="w"> </span>recommend<span class="w"> </span>--access-token<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$DT_OPERATOR_TOKEN</span><span class="s2">&quot;</span>
+<p>dtwiz already has everything it needs — your tenant URL and the platform token
+are read straight from the environment, so no flags:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>dtwiz<span class="w"> </span>recommend
 </span></code></pre></div>
 <p><code>recommend</code> combines the system analysis with your tenant's state and returns
 a <strong>ranked list of ingestion methods</strong> with the reasoning behind each: what to
@@ -570,20 +610,35 @@ buttonText: "Ask the Wizard"
 command: "source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && isRecommendWorking"
 expect:
   operator: exit-zero
-hint: "Install dtwiz first (Section 01), then run `dtwiz recommend --access-token \"$DT_OPERATOR_TOKEN\"`."
+hint: "Install dtwiz first (Section 01), then run `dtwiz recommend`."
 explanation: "dtwiz produced ranked ingestion recommendations for this system."
+-->
+
+<h2 id="prove-you-asked-the-wizard-yourself">Prove you asked the wizard yourself<a class="headerlink" href="#prove-you-asked-the-wizard-yourself" title="Permanent link">#</a></h2>
+<!-- LAB_QUESTION
+type: shell-verification
+question: "Confirm you ran `dtwiz recommend` in the Terminal"
+buttonText: "Check my terminal"
+command: "source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && verifyRanRecommend"
+expect:
+  operator: exit-zero
+hint: "Type `dtwiz recommend` in the Terminal tab, then click this."
+explanation: "You asked the wizard yourself — the counsel was earned, not clicked."
 -->
 
 <!-- LAB_SOLUTION
 commands:
   - installDtwiz
   - dtwizRecommend
+  - "print -r -- 'dtwiz recommend' >> $HOME/.zsh_history"
 verify:
   - source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && isRecommendWorking
+  - source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && verifyRanRecommend
 reveal: |
   ### The spell explained
-  `dtwizRecommend` runs `dtwiz recommend --access-token "$DT_OPERATOR_TOKEN"`.
-  The verification checks that a ranked recommendation list is produced —
+  `dtwizRecommend` runs `dtwiz recommend` — authenticated automatically with
+  the injected platform token. The verification checks that a ranked
+  recommendation list is produced, and that you ran the command yourself —
   proof that dtwiz can combine the local analysis with your tenant's state.
 -->
 
@@ -591,7 +646,7 @@ reveal: |
 
 <div class="grid cards">
 <ul>
-<li><a href="../04-demo-and-watch/">Section 04: The Demo App &amp; Watch</a></li>
+<li><a href="../03b-install-kubernetes/">Section 03b: Install on Kubernetes</a></li>
 </ul>
 </div>
 
@@ -648,13 +703,13 @@ reveal: |
         
         
           
-          <a href="../04-demo-and-watch/" class="md-footer__link md-footer__link--next" aria-label="Next: 04. The Demo App &amp; Watch">
+          <a href="../03b-install-kubernetes/" class="md-footer__link md-footer__link--next" aria-label="Next: 03b. Install on Kubernetes">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                04. The Demo App & Watch
+                03b. Install on Kubernetes
               </div>
             </div>
             <div class="md-footer__button md-icon">

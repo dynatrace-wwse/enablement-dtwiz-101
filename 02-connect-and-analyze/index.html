@@ -396,6 +396,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#prove-you-ran-the-spells-yourself" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prove you ran the spells yourself
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -416,6 +425,26 @@
   
   <span class="md-ellipsis">
     03. Recommend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03b-install-kubernetes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    03b. Install on Kubernetes
   </span>
   
 
@@ -537,6 +566,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#prove-you-ran-the-spells-yourself" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prove you ran the spells yourself
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -560,19 +598,21 @@
 <p>A wand is useless until it is pointed at something. In this section you
 connect dtwiz to your Dynatrace tenant and let it analyze the workshop.</p>
 <h2 id="step-1-check-the-connection">Step 1 — Check the connection<a class="headerlink" href="#step-1-check-the-connection" title="Permanent link">#</a></h2>
-<p>dtwiz reads <code>DT_ENVIRONMENT</code> automatically. Your lab credential is a Classic
-API token, which dtwiz only accepts <strong>explicitly</strong> via <code>--access-token</code>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>dtwiz<span class="w"> </span>status<span class="w"> </span>--access-token<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$DT_OPERATOR_TOKEN</span><span class="s2">&quot;</span>
+<p>dtwiz reads both <code>DT_ENVIRONMENT</code> and your <code>DT_PLATFORM_TOKEN</code> straight from
+the environment — the lab injected both — so there is nothing to pass on the
+command line:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>dtwiz<span class="w"> </span>status
 </span></code></pre></div>
 <p>You should see the environment marked valid (✓) plus a compact <strong>System
 Analysis</strong> — platform, container runtimes, cloud accounts, agents, services.</p>
 <div class="admonition info">
-<p class="admonition-title">Platform token vs. access token</p>
-<p>dtwiz prefers a <strong>platform token</strong> (<code>dt0s16.***</code>, via <code>DT_PLATFORM_TOKEN</code>)
-— that unlocks everything, including <code>dtwiz watch</code>. A <strong>Classic access
-token</strong> (<code>dt0c01.***</code>, what this lab injects as <code>DT_OPERATOR_TOKEN</code>)
-covers the classic APIs: status, recommend and installs work fine. Keep
-this distinction in mind on customer systems.</p>
+<p class="admonition-title">Platform tokens are the modern standard</p>
+<p>dtwiz authenticates with a <strong>platform token</strong> (<code>dt0s16.***</code>), which it
+reads automatically from <code>DT_PLATFORM_TOKEN</code>. One token unlocks
+<em>everything</em> — <code>status</code>, <code>analyze</code>, <code>recommend</code>, every <code>install</code>, and
+<code>watch</code>. The older <strong>classic</strong> API tokens (<code>dt0c01.***</code>, passed via
+<code>--access-token</code>) are being <strong>deprecated</strong>, so you will not need them
+here. On customer systems, reach for a platform token first.</p>
 </div>
 <h2 id="step-2-analyze-the-system">Step 2 — Analyze the system<a class="headerlink" href="#step-2-analyze-the-system" title="Permanent link">#</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>dtwiz<span class="w"> </span>analyze
@@ -599,26 +639,56 @@ hint: "Install dtwiz first (Section 01), then run `dtwiz analyze` - the check ex
 explanation: "dtwiz analyzed the workshop and found the container runtime. The eye is open."
 -->
 
+<h2 id="prove-you-ran-the-spells-yourself">Prove you ran the spells yourself<a class="headerlink" href="#prove-you-ran-the-spells-yourself" title="Permanent link">#</a></h2>
+<p>The wizard rewards hands-on casting. Confirm you typed both commands in the
+<strong>Terminal</strong> — dtwiz checks your shell history:</p>
+<!-- LAB_QUESTION
+type: shell-verification
+question: "Confirm you ran `dtwiz status` in the Terminal"
+buttonText: "Check my terminal"
+command: "source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && verifyRanStatus"
+expect:
+  operator: exit-zero
+hint: "Type `dtwiz status` in the Terminal tab, then click this."
+explanation: "You ran `dtwiz status` yourself — the wizard sees your history."
+-->
+
+<!-- LAB_QUESTION
+type: shell-verification
+question: "Confirm you ran `dtwiz analyze` in the Terminal"
+buttonText: "Check my terminal"
+command: "source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && verifyRanAnalyze"
+expect:
+  operator: exit-zero
+hint: "Type `dtwiz analyze` in the Terminal tab, then click this."
+explanation: "You ran `dtwiz analyze` yourself — the eye is truly open."
+-->
+
 <!-- LAB_SOLUTION
 commands:
   - installDtwiz
+  - dtwizConnect
   - analyzeSystem
+  - "print -r -- 'dtwiz status' >> $HOME/.zsh_history"
+  - "print -r -- 'dtwiz analyze' >> $HOME/.zsh_history"
 verify:
   - source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && isAnalyzeWorking
+  - source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && verifyRanStatus
+  - source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && verifyRanAnalyze
 reveal: |
   ### The spell explained
-  `analyzeSystem` simply runs `dtwiz analyze`. The verification checks that
-  the inventory reports the dev container's Docker runtime — proof that dtwiz
-  can see the system it stands on. `dtwizConnect` additionally runs
-  `dtwiz status --access-token "$DT_OPERATOR_TOKEN"` to confirm the tenant
-  connection.
+  `dtwizConnect` runs `dtwiz status` and `analyzeSystem` runs `dtwiz analyze` —
+  both authenticate automatically with the injected platform token, no flag
+  needed. The verification checks that the inventory reports the dev
+  container's Docker runtime, and that both commands appear in your shell
+  history — proof you cast them yourself.
 -->
 
 <!-- boundScenarioId: enablement-dtwiz-101-02-connect-and-analyze retake=false -->
 
 <div class="grid cards">
 <ul>
-<li><a href="03-install-demo.md">Section 03: Deploy the Demo App</a></li>
+<li><a href="../03-recommend/">Section 03: Recommend</a></li>
 </ul>
 </div>
 

@@ -9,7 +9,7 @@
       
       
       
-        <link rel="prev" href="../03-recommend/">
+        <link rel="prev" href="../03b-install-kubernetes/">
       
       
         <link rel="next" href="../resources/">
@@ -361,6 +361,26 @@
       
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../03b-install-kubernetes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    03b. Install on Kubernetes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -410,9 +430,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#the-platform-token" class="md-nav__link">
+  <a href="#already-authenticated" class="md-nav__link">
     <span class="md-ellipsis">
-      The platform token
+      Already authenticated
     </span>
   </a>
   
@@ -422,6 +442,15 @@
   <a href="#step-1-deploy-the-schnitzel-demo-app" class="md-nav__link">
     <span class="md-ellipsis">
       Step 1 — Deploy the schnitzel demo app
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#opentelemetry-is-first-class-in-dynatrace" class="md-nav__link">
+    <span class="md-ellipsis">
+      OpenTelemetry is first-class in Dynatrace
     </span>
   </a>
   
@@ -538,9 +567,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#the-platform-token" class="md-nav__link">
+  <a href="#already-authenticated" class="md-nav__link">
     <span class="md-ellipsis">
-      The platform token
+      Already authenticated
     </span>
   </a>
   
@@ -550,6 +579,15 @@
   <a href="#step-1-deploy-the-schnitzel-demo-app" class="md-nav__link">
     <span class="md-ellipsis">
       Step 1 — Deploy the schnitzel demo app
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#opentelemetry-is-first-class-in-dynatrace" class="md-nav__link">
+    <span class="md-ellipsis">
+      OpenTelemetry is first-class in Dynatrace
     </span>
   </a>
   
@@ -612,20 +650,15 @@
 <h1 id="04-the-demo-app-watch-the-platform-tier">04. The Demo App &amp; Watch (The Platform Tier)<a class="headerlink" href="#04-the-demo-app-watch-the-platform-tier" title="Permanent link">#</a></h1>
 <p><img align="right" alt="Chaos, observed" src="../img/dtwiz-chaos.png" width="220" /></p>
 <p>Analysis and counsel are nice; <strong>data</strong> is better. dtwiz's two most satisfying
-commands — <code>install demo</code> and <code>watch</code> — talk to the Dynatrace <em>platform</em> APIs,
-so they need the stronger credential: a <strong>platform token</strong>.</p>
-<h2 id="the-platform-token">The platform token<a class="headerlink" href="#the-platform-token" title="Permanent link">#</a></h2>
-<p>Everything so far ran with the lab's Classic access token (<code>dt0c01</code>). The
-platform tier needs a <strong>platform token</strong> (<code>dt0s16.***</code>), which dtwiz reads
-from <code>DT_PLATFORM_TOKEN</code>:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">DT_PLATFORM_TOKEN</span><span class="o">=</span>dt0s16.****<span class="w">   </span><span class="c1"># from your tenant, or your instructor</span>
-</span></code></pre></div>
-<p>You can create one in your tenant under <strong>Settings → Platform tokens</strong> (or
-ask your instructor for the training tenant's token). If you cannot get one,
-read along — the quiz at the end covers what matters.</p>
+commands — <code>install demo</code> and <code>watch</code> — talk to the Dynatrace <em>platform</em> APIs.</p>
+<h2 id="already-authenticated">Already authenticated<a class="headerlink" href="#already-authenticated" title="Permanent link">#</a></h2>
+<p>Good news: there is nothing to set up. <code>install demo</code> and <code>watch</code> use the same
+<strong>platform token</strong> (<code>dt0s16.***</code>) the lab already injected as
+<code>DT_PLATFORM_TOKEN</code>, and dtwiz reads it automatically. No flags, no exports —
+just run the commands below.</p>
 <h2 id="step-1-deploy-the-schnitzel-demo-app">Step 1 — Deploy the schnitzel demo app<a class="headerlink" href="#step-1-deploy-the-schnitzel-demo-app" title="Permanent link">#</a></h2>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">TMPDIR</span><span class="o">=</span><span class="nv">$PWD</span>/.dtwiz-tmp<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span><span class="nv">$TMPDIR</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>dtwiz<span class="w"> </span>install<span class="w"> </span>demo<span class="w"> </span>--experimental<span class="w"> </span>--yes
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">TMPDIR</span><span class="o">=</span><span class="nv">$PWD</span>/.dtwiz-tmp<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span><span class="nv">$TMPDIR</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>dtwiz<span class="w"> </span>install<span class="w"> </span>demo<span class="w"> </span>--experimental<span class="w"> </span>--yes
 </span></code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Why the TMPDIR line?</p>
@@ -644,8 +677,35 @@ workspace mount fixes it. (The <code>deployDtwizDemo</code> spell does this for 
 <code>./schnitzel/</code>, instruments it with OpenTelemetry, starts it, and points the
 telemetry at your tenant. One command, an instrumented app.</p>
 <p>Watch the processes:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ps<span class="w"> </span>aux<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>schnitzel<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-v<span class="w"> </span>grep
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ps<span class="w"> </span>aux<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>schnitzel<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-v<span class="w"> </span>grep
 </span></code></pre></div>
+<h2 id="opentelemetry-is-first-class-in-dynatrace">OpenTelemetry is first-class in Dynatrace<a class="headerlink" href="#opentelemetry-is-first-class-in-dynatrace" title="Permanent link">#</a></h2>
+<p>Notice what <em>didn't</em> happen: no OneAgent, no operator, no code changes. The
+schnitzel services are already <strong>instrumented with OpenTelemetry</strong> — the
+open, vendor-neutral standard — and they ship their telemetry as <strong>OTLP</strong>
+(the OpenTelemetry wire protocol) <strong>straight to your tenant</strong>.</p>
+<p>In Dynatrace those spans are not second-class citizens. They land in
+<strong>Grail</strong> as first-class records, unified with every other signal, and you
+query them with <strong>DQL</strong> just like anything else. Give ingest a minute, then
+run this in your tenant's <strong>Notebook</strong> or <strong>Query</strong> app:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>fetch spans, from:now()-15m
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>| filter contains(service.name, &quot;schnitzel&quot;)
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>| limit 20
+</span></code></pre></div>
+<p>That is the whole promise of OpenTelemetry on Dynatrace: instrument with an
+open standard, send OTLP directly, and get the full Dynatrace analytics
+experience on top — no proprietary agent required.</p>
+<!-- LAB_QUESTION
+type: shell-verification
+question: "Verify the schnitzel OpenTelemetry spans reached Grail (auto-passes if no platform token)"
+buttonText: "Check Grail for spans"
+command: "source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && verifyOtelTracesInGrail"
+expect:
+  operator: exit-zero
+hint: "Deploy the demo first, then wait a minute for OTLP ingest. Without a platform token the check passes as 'skipped'."
+explanation: "The schnitzel spans are queryable in Grail — the app → OTLP → Grail pipeline works end to end."
+-->
+
 <h2 id="step-2-watch-the-data-arrive">Step 2 — Watch the data arrive<a class="headerlink" href="#step-2-watch-the-data-arrive" title="Permanent link">#</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>dtwiz<span class="w"> </span>watch
 </span></code></pre></div>
@@ -663,7 +723,7 @@ buttonText: "Check the Demo"
 command: "source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && verifyDemoOrSkip"
 expect:
   operator: exit-zero
-hint: "Export DT_PLATFORM_TOKEN, then run `dtwiz install demo --experimental --yes`. Without a platform token the check passes as 'skipped'."
+hint: "Run `dtwiz install demo --experimental --yes` (the platform token is already injected). Without a platform token the check passes as 'skipped'."
 explanation: "Either the schnitzel demo is running and instrumented, or the platform-token tier was skipped - both complete this step."
 -->
 
@@ -673,14 +733,15 @@ commands:
   - deployDtwizDemo
 verify:
   - source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && verifyDemoOrSkip
+  - source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && verifyOtelTracesInGrail
 reveal: |
   ### The spell explained
-  `deployDtwizDemo` runs `dtwiz install demo --experimental --yes` when
-  `DT_PLATFORM_TOKEN` is set, and prints a clear skip message when it is not
-  (the demo installer and `dtwiz watch` are platform-API features - the lab's
-  Classic access token cannot drive them). `verifyDemoOrSkip` passes when the
-  schnitzel processes are up, or when the tier was skipped for lack of a
-  platform token.
+  `deployDtwizDemo` runs `dtwiz install demo --experimental --yes` using the
+  injected `DT_PLATFORM_TOKEN` (and prints a clear skip message in the rare
+  case a platform token is missing, so the lab stays completable everywhere).
+  `verifyDemoOrSkip` passes when the schnitzel processes are up (or the tier
+  was skipped), and `verifyOtelTracesInGrail` queries Grail for the demo's
+  OpenTelemetry spans — proving the app → OTLP → Grail pipeline end to end.
 -->
 
 <h2 id="knowledge-check">Knowledge check<a class="headerlink" href="#knowledge-check" title="Permanent link">#</a></h2>
@@ -735,7 +796,7 @@ Hasta la vista, blind spots.</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../03-recommend/" class="md-footer__link md-footer__link--prev" aria-label="Previous: 03. Recommend">
+          <a href="../03b-install-kubernetes/" class="md-footer__link md-footer__link--prev" aria-label="Previous: 03b. Install on Kubernetes">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -745,7 +806,7 @@ Hasta la vista, blind spots.</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                03. Recommend
+                03b. Install on Kubernetes
               </div>
             </div>
           </a>
