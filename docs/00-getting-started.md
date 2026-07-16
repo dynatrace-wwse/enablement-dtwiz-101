@@ -17,12 +17,17 @@ run for you by clicking a check button.
 
 ## Your credentials
 
-The lab injected two environment variables you will use throughout:
+The lab injected the two environment variables dtwiz needs — and dtwiz reads
+**both automatically**, so you never type a token on the command line:
 
-- `DT_ENVIRONMENT` — your Dynatrace tenant URL. dtwiz reads it automatically.
-- `DT_OPERATOR_TOKEN` — a Classic API token (`dt0c01.***`). dtwiz accepts it
-  via the `--access-token` flag — **never** from an environment variable
-  (that's a dtwiz safety choice, so you always know which credential you use).
+- `DT_ENVIRONMENT` — your Dynatrace tenant URL.
+- `DT_PLATFORM_TOKEN` — a modern **platform token** (`dt0s16.***`).
+
+Because dtwiz picks both up straight from the environment, `dtwiz status`,
+`dtwiz analyze`, `dtwiz recommend`, `dtwiz install …` and `dtwiz watch` all
+just work — **no `--access-token` flag, nothing to export by hand**. Platform
+tokens are the standard dtwiz is built around; the old classic `dt0c01` API
+tokens are being deprecated.
 
 ```bash
 echo $DT_ENVIRONMENT

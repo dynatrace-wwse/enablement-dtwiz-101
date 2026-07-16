@@ -3,22 +3,14 @@
 ![Chaos, observed](img/dtwiz-chaos.png){ width="220" align=right }
 
 Analysis and counsel are nice; **data** is better. dtwiz's two most satisfying
-commands — `install demo` and `watch` — talk to the Dynatrace *platform* APIs,
-so they need the stronger credential: a **platform token**.
+commands — `install demo` and `watch` — talk to the Dynatrace *platform* APIs.
 
-## The platform token
+## Already authenticated
 
-Everything so far ran with the lab's Classic access token (`dt0c01`). The
-platform tier needs a **platform token** (`dt0s16.***`), which dtwiz reads
-from `DT_PLATFORM_TOKEN`:
-
-```bash
-export DT_PLATFORM_TOKEN=dt0s16.****   # from your tenant, or your instructor
-```
-
-You can create one in your tenant under **Settings → Platform tokens** (or
-ask your instructor for the training tenant's token). If you cannot get one,
-read along — the quiz at the end covers what matters.
+Good news: there is nothing to set up. `install demo` and `watch` use the same
+**platform token** (`dt0s16.***`) the lab already injected as
+`DT_PLATFORM_TOKEN`, and dtwiz reads it automatically. No flags, no exports —
+just run the commands below.
 
 ## Step 1 — Deploy the schnitzel demo app
 
@@ -48,6 +40,39 @@ Watch the processes:
 ps aux | grep -i schnitzel | grep -v grep
 ```
 
+## OpenTelemetry is first-class in Dynatrace
+
+Notice what *didn't* happen: no OneAgent, no operator, no code changes. The
+schnitzel services are already **instrumented with OpenTelemetry** — the
+open, vendor-neutral standard — and they ship their telemetry as **OTLP**
+(the OpenTelemetry wire protocol) **straight to your tenant**.
+
+In Dynatrace those spans are not second-class citizens. They land in
+**Grail** as first-class records, unified with every other signal, and you
+query them with **DQL** just like anything else. Give ingest a minute, then
+run this in your tenant's **Notebook** or **Query** app:
+
+```dql
+fetch spans, from:now()-15m
+| filter contains(service.name, "schnitzel")
+| limit 20
+```
+
+That is the whole promise of OpenTelemetry on Dynatrace: instrument with an
+open standard, send OTLP directly, and get the full Dynatrace analytics
+experience on top — no proprietary agent required.
+
+<!-- LAB_QUESTION
+type: shell-verification
+question: "Verify the schnitzel OpenTelemetry spans reached Grail (auto-passes if no platform token)"
+buttonText: "Check Grail for spans"
+command: "source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && verifyOtelTracesInGrail"
+expect:
+  operator: exit-zero
+hint: "Deploy the demo first, then wait a minute for OTLP ingest. Without a platform token the check passes as 'skipped'."
+explanation: "The schnitzel spans are queryable in Grail — the app → OTLP → Grail pipeline works end to end."
+-->
+
 ## Step 2 — Watch the data arrive
 
 ```bash
@@ -73,7 +98,7 @@ buttonText: "Check the Demo"
 command: "source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && verifyDemoOrSkip"
 expect:
   operator: exit-zero
-hint: "Export DT_PLATFORM_TOKEN, then run `dtwiz install demo --experimental --yes`. Without a platform token the check passes as 'skipped'."
+hint: "Run `dtwiz install demo --experimental --yes` (the platform token is already injected). Without a platform token the check passes as 'skipped'."
 explanation: "Either the schnitzel demo is running and instrumented, or the platform-token tier was skipped - both complete this step."
 -->
 
@@ -83,14 +108,15 @@ commands:
   - deployDtwizDemo
 verify:
   - source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && verifyDemoOrSkip
+  - source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && verifyOtelTracesInGrail
 reveal: |
   ### The spell explained
-  `deployDtwizDemo` runs `dtwiz install demo --experimental --yes` when
-  `DT_PLATFORM_TOKEN` is set, and prints a clear skip message when it is not
-  (the demo installer and `dtwiz watch` are platform-API features - the lab's
-  Classic access token cannot drive them). `verifyDemoOrSkip` passes when the
-  schnitzel processes are up, or when the tier was skipped for lack of a
-  platform token.
+  `deployDtwizDemo` runs `dtwiz install demo --experimental --yes` using the
+  injected `DT_PLATFORM_TOKEN` (and prints a clear skip message in the rare
+  case a platform token is missing, so the lab stays completable everywhere).
+  `verifyDemoOrSkip` passes when the schnitzel processes are up (or the tier
+  was skipped), and `verifyOtelTracesInGrail` queries Grail for the demo's
+  OpenTelemetry spans — proving the app → OTLP → Grail pipeline end to end.
 -->
 
 ## Knowledge check

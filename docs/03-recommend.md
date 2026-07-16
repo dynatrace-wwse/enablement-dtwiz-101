@@ -7,8 +7,11 @@ party trick: telling you what to do next.
 
 ## Ask for recommendations
 
+dtwiz already has everything it needs — your tenant URL and the platform token
+are read straight from the environment, so no flags:
+
 ```bash
-dtwiz recommend --access-token "$DT_OPERATOR_TOKEN"
+dtwiz recommend
 ```
 
 `recommend` combines the system analysis with your tenant's state and returns
@@ -38,25 +41,41 @@ buttonText: "Ask the Wizard"
 command: "source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && isRecommendWorking"
 expect:
   operator: exit-zero
-hint: "Install dtwiz first (Section 01), then run `dtwiz recommend --access-token \"$DT_OPERATOR_TOKEN\"`."
+hint: "Install dtwiz first (Section 01), then run `dtwiz recommend`."
 explanation: "dtwiz produced ranked ingestion recommendations for this system."
+-->
+
+## Prove you asked the wizard yourself
+
+<!-- LAB_QUESTION
+type: shell-verification
+question: "Confirm you ran `dtwiz recommend` in the Terminal"
+buttonText: "Check my terminal"
+command: "source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && verifyRanRecommend"
+expect:
+  operator: exit-zero
+hint: "Type `dtwiz recommend` in the Terminal tab, then click this."
+explanation: "You asked the wizard yourself — the counsel was earned, not clicked."
 -->
 
 <!-- LAB_SOLUTION
 commands:
   - installDtwiz
   - dtwizRecommend
+  - "print -r -- 'dtwiz recommend' >> $HOME/.zsh_history"
 verify:
   - source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && isRecommendWorking
+  - source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && verifyRanRecommend
 reveal: |
   ### The spell explained
-  `dtwizRecommend` runs `dtwiz recommend --access-token "$DT_OPERATOR_TOKEN"`.
-  The verification checks that a ranked recommendation list is produced —
+  `dtwizRecommend` runs `dtwiz recommend` — authenticated automatically with
+  the injected platform token. The verification checks that a ranked
+  recommendation list is produced, and that you ran the command yourself —
   proof that dtwiz can combine the local analysis with your tenant's state.
 -->
 
 <!-- boundScenarioId: enablement-dtwiz-101-03-recommend retake=false -->
 
 <div class="grid cards" markdown>
-- [Section 04: The Demo App & Watch](04-demo-and-watch.md)
+- [Section 03b: Install on Kubernetes](03b-install-kubernetes.md)
 </div>
