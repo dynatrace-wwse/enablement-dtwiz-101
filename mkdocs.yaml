@@ -9,6 +9,7 @@ nav:
   - "01. Install dtwiz": 01-install-dtwiz.md
   - "02. Connect & Analyze": 02-connect-and-analyze.md
   - "03. Recommend": 03-recommend.md
+  - "03b. Install on Kubernetes": 03b-install-kubernetes.md
   - "04. The Demo App & Watch": 04-demo-and-watch.md
   - "Resources": resources.md
   - "Cleanup": cleanup.md

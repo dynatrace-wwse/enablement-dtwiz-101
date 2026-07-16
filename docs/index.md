@@ -21,6 +21,7 @@ DTWiz: 100% confidence, 60% documentation.
 | Check the connection to your tenant | `dtwiz status` |
 | Analyze what a system runs | `dtwiz analyze` |
 | Get ranked ingestion recommendations | `dtwiz recommend` |
+| Deploy the Operator on Kubernetes (k3d) | `dtwiz install kubernetes` |
 | Deploy & instrument the schnitzel demo app | `dtwiz install demo` |
 | Watch data arrive in Dynatrace | `dtwiz watch` |
 
