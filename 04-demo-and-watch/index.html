@@ -689,9 +689,13 @@ open, vendor-neutral standard — and they ship their telemetry as <strong>OTLP<
 query them with <strong>DQL</strong> just like anything else. Give ingest a minute, then
 run this in your tenant's <strong>Notebook</strong> or <strong>Query</strong> app:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>fetch spans, from:now()-15m
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>| filter contains(service.name, &quot;schnitzel&quot;)
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>| filter startsWith(service.name, &quot;{{DT_SESSION_ID}}&quot;)
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>| limit 20
 </span></code></pre></div>
+<p>The <code>startsWith(service.name, "{{DT_SESSION_ID}}")</code> filter scopes the query to
+<strong>your</strong> schnitzel services — the lab names them <code>{{DT_SESSION_ID}}-frontend</code>,
+<code>{{DT_SESSION_ID}}-order</code>, and so on, so when a whole class runs this demo
+against the same tenant, everyone sees only their own spans.</p>
 <p>That is the whole promise of OpenTelemetry on Dynatrace: instrument with an
 open standard, send OTLP directly, and get the full Dynatrace analytics
 experience on top — no proprietary agent required.</p>
