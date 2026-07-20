@@ -185,7 +185,22 @@ isKspmDisabled(){
 # are first-class Grail records you query with DQL (`fetch spans`). This helper
 # proves the end-to-end OTel pipeline (app → OTLP → Grail) by querying the
 # tenant for recent schnitzel spans, using the injected platform token.
-otelTracesQuery(){ printf 'fetch spans, from:now()-15m\n| filter in(service.name, {"frontend","order","delivery","loadgenerator"}) or contains(service.name, "schnitzel")\n| summarize spans = count()'; }
+# Per-user isolation id — same idea as the k8s cluster-name suffix. Orbital
+# injects DT_HOSTGROUP="<user>-<yyyymmdd>" per session; we prefix every schnitzel
+# service.name with it so 100 learners can run the demo against ONE tenant and
+# each filters Grail to ONLY their own spans. Falls back to a host-derived id
+# for local runs so the demo still works off-Orbital.
+_dtSessionId(){
+  local raw="${DT_HOSTGROUP:-}"
+  [ -z "$raw" ] && raw="local-$(hostname 2>/dev/null | tr '[:upper:]' '[:lower:]')"
+  echo "$raw" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9-]+/-/g; s/^-+//; s/-+$//'
+}
+
+# DQL: only THIS session's schnitzel spans (service.name is "<sid>-<svc>").
+otelTracesQuery(){
+  local sid; sid="$(_dtSessionId)"
+  printf 'fetch spans, from:now()-15m\n| filter startsWith(service.name, "%s-")\n| summarize spans = count()' "$sid"
+}
 
 # Run a DQL query against Grail and return the record count. The query:execute
 # API is ASYNC: the first POST usually returns {state:RUNNING, requestToken};
@@ -284,10 +299,14 @@ startSchnitzel(){
   export OTEL_EXPORTER_OTLP_ENDPOINT OTEL_TRACES_EXPORTER=otlp OTEL_METRICS_EXPORTER=otlp OTEL_LOGS_EXPORTER=otlp
   local runner="$py"
   command -v opentelemetry-instrument >/dev/null 2>&1 && runner="opentelemetry-instrument $py"
+  # Per-user isolation: name each service "<session-id>-<svc>" so every learner's
+  # spans are distinct in a shared tenant (mirrors the k8s cluster-name suffix).
+  local sid; sid="$(_dtSessionId)"
+  printInfo "Isolating this session's telemetry as service.name '$sid-*'"
   local svc
   for svc in order delivery frontend loadgenerator; do
     [ -f "$dir/$svc/app.py" ] || continue
-    ( cd "$dir/$svc" && OTEL_SERVICE_NAME="$svc" nohup $runner app.py \
+    ( cd "$dir/$svc" && OTEL_SERVICE_NAME="$sid-$svc" nohup $runner app.py \
         >"/tmp/schnitzel-$svc.log" 2>&1 & )
     sleep 1
   done

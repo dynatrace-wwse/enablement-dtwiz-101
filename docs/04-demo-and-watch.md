@@ -54,9 +54,14 @@ run this in your tenant's **Notebook** or **Query** app:
 
 ```dql
 fetch spans, from:now()-15m
-| filter contains(service.name, "schnitzel")
+| filter startsWith(service.name, "{{DT_SESSION_ID}}")
 | limit 20
 ```
+
+The `startsWith(service.name, "{{DT_SESSION_ID}}")` filter scopes the query to
+**your** schnitzel services — the lab names them `{{DT_SESSION_ID}}-frontend`,
+`{{DT_SESSION_ID}}-order`, and so on, so when a whole class runs this demo
+against the same tenant, everyone sees only their own spans.
 
 That is the whole promise of OpenTelemetry on Dynatrace: instrument with an
 open standard, send OTLP directly, and get the full Dynatrace analytics
