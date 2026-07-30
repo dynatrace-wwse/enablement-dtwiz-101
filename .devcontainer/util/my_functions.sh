@@ -234,15 +234,19 @@ verifyOtelTracesInGrail(){
     printInfo "No DT_PLATFORM_TOKEN — OTel-trace check skipped (OK)."; return 0
   fi
   printInfoSection "Querying Grail for schnitzel OpenTelemetry spans"
-  local count i=0
-  while [ "$i" -lt 12 ]; do
+  # Learner click: one Grail query, instant answer. LAB_WAIT=1 (solution runner,
+  # lab-driver, validator): retry — OTLP ingest legitimately lags ~1-2 min.
+  local count attempts=1 i=1
+  [ -n "${LAB_WAIT:-}" ] && attempts=12
+  while :; do
     count=$(_grailCount "$(otelTracesQuery)")
     if [ "${count:-0}" -gt 0 ] 2>/dev/null; then
       printInfo "✅ $count schnitzel OpenTelemetry span(s) in Grail — the OTLP pipeline works end-to-end"; return 0
     fi
-    i=$((i + 1)); printInfo "spans not in Grail yet ($i/12) — OTLP ingest takes a minute, waiting 15s"; sleep 15
+    [ "$i" -ge "$attempts" ] && break
+    i=$((i + 1)); printInfo "spans not in Grail yet ($i/$attempts) — OTLP ingest takes a minute, waiting 15s"; sleep 15
   done
-  printWarn "No schnitzel spans in Grail yet — give ingest more time, or check the demo is running (isDemoRunning)"
+  printWarn "No schnitzel spans in Grail yet — OTLP ingest takes a minute or two after the demo starts. Make sure the demo is running (isDemoRunning), then check again."
   return 1
 }
 
