@@ -32,11 +32,10 @@
     }
   },
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
-  "forwardPorts": [80, 8000],
+  "forwardPorts": [80],
   // add labels
   "portsAttributes": {
-    "80": { "label": "Application Web UI" },
-    "8000": { "label": "MkDocs Training Guide" }
+    "80": { "label": "Application Web UI" }
   },
   // minimal CPU when running DT components and apps.
   "hostRequirements": {
