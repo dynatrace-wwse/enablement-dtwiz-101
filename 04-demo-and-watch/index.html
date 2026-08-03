@@ -737,7 +737,7 @@ commands:
   - deployDtwizDemo
 verify:
   - source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && verifyDemoOrSkip
-  - source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && verifyOtelTracesInGrail
+  - export LAB_WAIT=1; source .devcontainer/util/source_framework.sh >/dev/null 2>&1 && verifyOtelTracesInGrail
 reveal: |
   ### The spell explained
   `deployDtwizDemo` runs `dtwiz install demo --experimental --yes` using the
