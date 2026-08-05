@@ -1,3 +1,5 @@
+<!-- LAB_NO_SOLUTION: Orientation page — the shell check only confirms the dev container came up. -->
+
 # 00. Getting Started
 
 Every wizard needs a workshop. Yours is a Dev Container (in the Dynatrace
