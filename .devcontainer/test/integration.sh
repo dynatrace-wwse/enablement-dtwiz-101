@@ -26,7 +26,11 @@ _spells="installDtwiz isDtwizInstalled dtwizConnect analyzeSystem dtwizRecommend
   patchDynakubeDisableKspm isKspmDisabled verifyOtelTracesInGrail \
   verifyRanInstall verifyRanStatus verifyRanAnalyze verifyRanRecommend verifyRanDemo"
 _missing=""
-for _fn in $_spells; do
+# ${=_spells}, not $_spells: this script runs under zsh, which does NOT word-split
+# an unquoted scalar. Plain $_spells looked up the whole 17-name string as a single
+# function name, so every lookup failed and the test reported all helpers missing
+# even though they were defined (installDtwiz succeeds two checks below).
+for _fn in ${=_spells}; do
   type "$_fn" >/dev/null 2>&1 || _missing="$_missing $_fn"
 done
 if [ -z "$_missing" ]; then
