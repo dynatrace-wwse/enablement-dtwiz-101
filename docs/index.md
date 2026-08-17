@@ -1,5 +1,9 @@
 # DTWiz 101: One Wizard to Instrument Them All
 
+!!! info "Being converted to the Dynatrace Enablement App"
+    This training is being converted to an immersive, interactive and self-service training
+    that is best delivered through the **Dynatrace Enablement App**.
+
 > In which a mildly over-caffeinated wizard hands you their favourite wand —
 > **dtwiz**, the Dynatrace Ingest CLI — and teaches you to analyze any
 > environment, deploy a demo app, and let Dynatrace see all. No slides, no
