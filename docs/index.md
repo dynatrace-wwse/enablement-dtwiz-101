@@ -1,3 +1,12 @@
+---
+description: Install the dtwiz CLI yourself, then use it to analyze a system, get ranked ingestion recommendations, deploy the Dynatrace Operator on a k3d Kubernetes cluster and instrument a demo app. Finish by watching the data arrive in Dynatrace with dtwiz watch.
+tags:
+  - classic
+  - dtwiz
+  - cli
+  - kubernetes
+---
+
 # DTWiz 101: One Wizard to Instrument Them All
 
 !!! info "Being converted to the Dynatrace Enablement App"
