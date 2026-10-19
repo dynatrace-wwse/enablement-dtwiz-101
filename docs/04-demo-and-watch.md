@@ -1,4 +1,4 @@
-# 04. The Demo App & Watch (The Platform Tier)
+# 04. The Demo App & Watch
 
 ![Chaos, observed](img/dtwiz-chaos.png){ width="220" align=right }
 

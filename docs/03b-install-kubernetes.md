@@ -1,4 +1,4 @@
-# 03b. Install on Kubernetes (The Operator Familiar)
+# 03b. Install on Kubernetes
 
 ![The all-seeing eye, now watching a cluster](img/dtwiz-eye.png){ width="220" align=right }
 

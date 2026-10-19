@@ -1,4 +1,4 @@
-# 02. Connect & Analyze (The All-Seeing Eye)
+# 02. Connect & Analyze
 
 ![The all-seeing eye](img/dtwiz-eye.png){ width="220" align=right }
 

@@ -1,4 +1,4 @@
-# 03. Recommend (The Wizard's Counsel)
+# 03. Recommend
 
 ![The wizard's counsel](img/dtwiz-todo.png){ width="220" align=right }
 

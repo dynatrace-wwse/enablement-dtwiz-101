@@ -1,4 +1,4 @@
-# 01. Install dtwiz (Summon the Wand)
+# 01. Install dtwiz
 
 ![Wizard summoning the CLI out of thin air](img/dtwiz-conjure.png){ width="220" align=right }
 
