@@ -1,0 +1,4 @@
+fetch logs, from:now()-15m
+| filter k8s.cluster.name == "{{ .cluster }}"
+| fields timestamp, k8s.namespace.name, content
+| limit 5

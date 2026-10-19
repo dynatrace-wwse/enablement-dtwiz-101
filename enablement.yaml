@@ -1,5 +1,5 @@
 framework:
-  version: 0.1.1
+  version: 1.14.0
 lab:
   id: enablement-dtwiz-101
   title: "Dynatrace Enablement Lab: dtwiz 101"
@@ -7,8 +7,8 @@ lab:
   audience: sales-engineers
 runtime:
   docs: true
-  sampleApp: true
-  telemetryGenerator: true
+  sampleApp: false
+  telemetryGenerator: false
 observability:
-  otel: true
+  otel: false
   rum: true

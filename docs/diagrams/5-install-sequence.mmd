@@ -1,0 +1,13 @@
+sequenceDiagram
+  participant L as Learner
+  participant W as dtwiz
+  participant T as Tenant
+  participant K as k3d cluster
+  L->>W: dtwiz install kubernetes --yes
+  W->>T: DQL token check
+  T-->>W: 200
+  W->>K: helm install dynatrace-operator
+  W->>K: kubectl apply Secret + 2 DynaKubes
+  K->>T: operator: connection info, ActiveGate token
+  W->>K: wait until every pod is Ready
+  K-->>W: node-config-collector never Ready on k3d

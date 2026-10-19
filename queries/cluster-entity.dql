@@ -1,0 +1,3 @@
+smartscapeNodes K8S_CLUSTER
+| filter name == "{{ .cluster }}"
+| fields name, id

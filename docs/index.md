@@ -1,48 +1,61 @@
 ---
-description: Install the dtwiz CLI yourself, then use it to analyze a system, get ranked ingestion recommendations, deploy the Dynatrace Operator on a k3d Kubernetes cluster and instrument a demo app. Finish by watching the data arrive in Dynatrace with dtwiz watch.
+description: Install dtwiz, the Dynatrace Ingest CLI, connect it to your tenant with a platform token, let it analyze a running Kubernetes cluster and deploy the Dynatrace Operator into it. Troubleshoot what fails, confirm the data in Dynatrace and remove the deployment again.
 tags:
-  - classic
   - dtwiz
   - cli
   - kubernetes
+  - operator
+  - platform-token
+difficulty: beginner
+duration: 60
 ---
 
-# DTWiz 101: One Wizard to Instrument Them All
+# dtwiz 101: deploy Dynatrace with the Dynatrace Ingest CLI
 
-!!! info "Being converted to the Dynatrace Enablement App"
-    This training is being converted to an immersive, interactive and self-service training
-    that is best delivered through the **Dynatrace Enablement App**.
+[dtwiz](https://github.com/dynatrace-oss/dtwiz) is a command-line tool from Dynatrace that
+inspects a system, recommends how to get its telemetry into Dynatrace, and installs that
+ingestion method: OneAgent, the Dynatrace Operator on Kubernetes, an OpenTelemetry Collector or
+a cloud integration. It authenticates with one **platform token** (`dt0s16`) and needs no other
+credential.
 
-> In which a mildly over-caffeinated wizard hands you their favourite wand —
-> **dtwiz**, the Dynatrace Ingest CLI — and teaches you to analyze any
-> environment, deploy a demo app, and let Dynatrace see all. No slides, no
-> hand-waving: a real terminal, a real tenant, one very opinionated CLI.
+Your environment already runs a k3d Kubernetes cluster. You install dtwiz, connect it to your
+tenant, let it analyze the machine and the cluster, and deploy the Dynatrace Operator with it.
+You then troubleshoot the failure modes you will meet on customer systems, confirm in Dynatrace
+that the cluster reports, and remove everything dtwiz installed.
 
-Welcome, apprentice. [dtwiz](https://github.com/dynatrace-oss/dtwiz) analyzes
-a system and figures out the **best way to get Dynatrace observability into
-it** — OneAgent, Kubernetes Operator, OpenTelemetry, cloud integrations — then
-installs it for you. In this lab you learn to wield it end to end.
+![dtwiz reads the kubeconfig and validates its platform token against the tenant, then installs the Dynatrace Operator into the k3d cluster, whose ActiveGate and log module send telemetry to Grail](img/index-architecture.svg)
 
-![DTWiz, your questionably qualified guide](img/dtwiz-wizard.png){ width="260" }
-/// caption
-DTWiz: 100% confidence, 60% documentation.
-///
+## Steps
 
-| You will learn to | Command used |
-| --- | --- |
-| Install the dtwiz CLI from scratch | `installDtwiz` (or the one-liner) |
-| Check the connection to your tenant | `dtwiz status` |
-| Analyze what a system runs | `dtwiz analyze` |
-| Get ranked ingestion recommendations | `dtwiz recommend` |
-| Deploy the Operator on Kubernetes (k3d) | `dtwiz install kubernetes` |
-| Deploy & instrument the schnitzel demo app | `dtwiz install demo` |
-| Watch data arrive in Dynatrace | `dtwiz watch` |
+| Step | What you do | dtwiz command |
+|---|---|---|
+| 1. Verify the environment | confirm the k3d cluster is running and selected | — |
+| 2. Install and connect dtwiz | install the CLI, validate the platform token | `dtwiz version`, `dtwiz status` |
+| 3. Analyze the system | inventory the machine and the cluster | `dtwiz analyze` |
+| 4. Read the recommendations | rank the ingestion methods for this system | `dtwiz recommend` |
+| 5. Deploy the Dynatrace Operator | Operator, DynaKube and token secret in one command | `dtwiz install kubernetes` |
+| 6. Troubleshoot | authentication, cluster context, network, a pod that never becomes Ready | `dtwiz status`, `kubectl` |
+| 7. Analyze the cluster in Dynatrace | watch data arrive, prove it with DQL | `dtwiz watch`, `dtctl query` |
+| 8. Remove the deployment | uninstall what dtwiz installed | `dtwiz uninstall kubernetes` |
 
-!!! tip "Why this lab is different"
-    Most labs pre-install everything. Not here. You will **install dtwiz
-    yourself** in Section 01 — because a wizard who cannot summon their own
-    wand is just a person in a pointy hat.
+## Isolation in a shared tenant
 
-<div class="grid cards" markdown>
-- [Begin: Getting Started](00-getting-started.md)
-</div>
+Every learner sends data to the same tenant. Your k3d cluster is named after your session, and
+dtwiz names the DynaKube, and so the Kubernetes cluster in Dynatrace, after the kubeconfig
+cluster: `k3d-enablement-` followed by eight characters derived from your session id. Print it:
+
+```bash
+dtwizClusterName
+```
+
+Every check in this training filters on that name.
+
+## Tokens
+
+Nobody pastes a token. The Enablement app mints the platform token for your seat, sets it as
+`DT_PLATFORM_TOKEN` next to `DT_ENVIRONMENT`, and revokes it when the session ends. Its scopes
+are declared in this repository's `.devcontainer/yaml/dt-tokens.yaml`, each one next to the
+dtwiz command that needs it. The app also gives every seat a separate read token for `dtctl`
+(`DT_DTCTL_TOKEN`), which step 7 uses.
+
+<!-- LAB_NO_SOLUTION: welcome page — nothing in the environment changes -->

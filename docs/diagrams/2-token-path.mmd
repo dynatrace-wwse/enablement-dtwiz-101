@@ -1,0 +1,10 @@
+flowchart LR
+  app["Enablement app: mints one platform token per seat"]
+  env["DT_PLATFORM_TOKEN + DT_ENVIRONMENT in your shell"]
+  cli["dtwiz"]
+  q["tenant: DQL fetch dt.system.events"]
+  sec["DynaKube secret: apiToken + dataIngestToken"]
+  app --> env
+  env --> cli
+  cli -- "status / install: validate" --> q
+  cli -- "install kubernetes: writes the same token" --> sec

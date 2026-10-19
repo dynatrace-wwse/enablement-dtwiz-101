@@ -1,5 +1,5 @@
 {
-  "name": "DTWiz 101: The Kubernetes Observability Spellbook",
+  "name": "dtwiz 101: Deploy Dynatrace with the Dynatrace Ingest CLI",
   // Pulling the image from the Dockerhub, runs on AMD64 and ARM64. Pulling is normally faster.
   "image": "shinojosa/dt-enablement:v1.2",
   /*
@@ -37,8 +37,11 @@
   "portsAttributes": {
     "80": { "label": "Application Web UI" }
   },
-  // minimal CPU when running DT components and apps.
+  // dtwiz's DynaKube requests 6 GiB for the Kubernetes-monitoring ActiveGate and 3 x 2 GiB for
+  // the routing ActiveGates. On a smaller Codespace those pods stay Pending and step 6 never
+  // turns green.
   "hostRequirements": {
-    "cpus": 2
+    "cpus": 4,
+    "memory": "16gb"
   }
 }
