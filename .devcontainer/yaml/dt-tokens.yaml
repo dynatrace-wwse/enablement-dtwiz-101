@@ -1,0 +1,56 @@
+# Dynatrace token declaration for enablement-dtwiz-101.
+#
+# dtwiz authenticates with ONE platform token (dt0s16), read from DT_PLATFORM_TOKEN. It
+# uses that token for its own calls AND writes it into the DynaKube secret as both
+# apiToken and dataIngestToken (dtwiz pkg/installer/kubernetes/install.go:246-247), so the
+# Dynatrace Operator, the ActiveGate and the log module run on the same token. This repo
+# therefore needs exactly one token and none of the framework's classic
+# DT_OPERATOR_TOKEN / DT_INGEST_TOKEN pair: nothing in this training reads them.
+#
+# Every scope below is listed against the dtwiz command (or the component dtwiz deploys)
+# that needs it. Derived from the dtwiz source at v1.13.0; the per-scope evidence and what
+# is still unproven are in the PR description. Do not add a scope without naming the call.
+#
+# The training does not run `dtwiz install demo`, `install otel*` or any cloud installer,
+# so the extensions:*, rum:* and cloud scopes in dtwiz's README baseline are not requested.
+#
+# NOTE: the Enablement app clamps every seat token to its committed scope ceiling
+# (api/_scope-ceiling.ts). On the app version current when this file was written,
+# storage:system:read, the storage:*:read set and openpipeline:*:ingest are above that
+# ceiling and are dropped at mint time. Without storage:system:read, `dtwiz status` reports
+# the token invalid and every `dtwiz install` refuses to start. See the PR.
+migrationStatus: migrated
+
+tokens:
+  - name_suffix: dtwiz
+    env_var: DT_PLATFORM_TOKEN
+    kind: platform
+    scopes:
+      # dtwiz status / install / watch: token validation runs the DQL query
+      # `fetch dt.system.events | limit 1` (cmd/auth.go:184). 403 = fatal for install.
+      - storage:system:read
+
+      # dtwiz watch (step 7) and the post-install watch: DQL on smartscape, logs and spans
+      # (pkg/installer/ingest_watch.go:611-635). Non-fatal; sections stay empty without them.
+      - storage:buckets:read
+      - storage:smartscape:read
+      - storage:logs:read
+      - storage:spans:read
+
+      # Dynatrace Operator (apiToken): connection info, ActiveGate token, container image
+      # lookup, Kubernetes connection settings. The same set enablement-kubernetes-101
+      # declares and proved, minus fleet-management:oneagents:download: dtwiz's DynaKube
+      # pulls the code modules image from public.ecr.aws, not from the tenant.
+      - fleet-management:activegate.connection-info:read
+      - fleet-management:activegate.tokens:create
+      - fleet-management:container-images:read
+      - fleet-management:oneagent.connection-info:read
+      - settings:objects:read
+      - settings:objects:write
+
+      # dataIngestToken: the log module and the ActiveGate's telemetry ingest. The set
+      # enablement-kubernetes-101 declares and proved for its ingest token.
+      - openpipeline:logs:ingest
+      - openpipeline:metrics:ingest
+      - openpipeline:traces:ingest
+      - storage:metrics:write

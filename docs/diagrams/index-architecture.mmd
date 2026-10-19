@@ -1,0 +1,21 @@
+flowchart LR
+  subgraph env["Your environment"]
+    cli["dtwiz CLI"]
+    kube["kubeconfig: k3d cluster"]
+    subgraph k3d["k3d cluster"]
+      op["Dynatrace Operator"]
+      dk["DynaKube + token secret"]
+      ag["ActiveGate, log module"]
+    end
+  end
+  subgraph tenant["Dynatrace tenant (shared)"]
+    api["Platform and classic APIs"]
+    grail["Grail: logs, entities"]
+  end
+  cli -- "analyze reads" --> kube
+  cli -- "status: validate token" --> api
+  cli -- "install: helm + kubectl apply" --> op
+  op -- "reconciles" --> dk
+  dk -- "starts" --> ag
+  ag -- "telemetry" --> grail
+  op -- "connection info, AG token" --> api

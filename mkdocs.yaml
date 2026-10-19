@@ -9,17 +9,15 @@ repo_name: "View Code on GitHub"
 repo_url: "https://github.com/dynatrace-wwse/enablement-dtwiz-101"
 nav:
   - "Welcome": index.md
-  - "00. Getting Started": 00-getting-started.md
-  - "01. Install dtwiz": 01-install-dtwiz.md
-  - "02. Connect & Analyze": 02-connect-and-analyze.md
-  - "03. Recommend": 03-recommend.md
-  - "03b. Install on Kubernetes": 03b-install-kubernetes.md
-  - "04. The Demo App & Watch": 04-demo-and-watch.md
-  - "Resources": resources.md
-  - "Cleanup": cleanup.md
-
-extra_javascript:
-  - javascripts/assessment-gate.js
+  - "1. Verify the environment": 1-verify-environment.md
+  - "2. Install and connect dtwiz": 2-install-and-connect.md
+  - "3. Analyze the system": 3-analyze.md
+  - "4. Read the recommendations": 4-recommend.md
+  - "5. Deploy the Dynatrace Operator": 5-deploy-operator.md
+  - "6. Troubleshoot": 6-troubleshoot.md
+  - "7. Analyze the cluster in Dynatrace": 7-analyze-in-dynatrace.md
+  - "8. Remove the deployment": 8-remove.md
+  - "Assessment and resources": resources.md
 
 extra:
   rum_snippet: "https://js-cdn.dynatrace.com/jstag/1612cf70810/bf81393wlb/7c50bce5c0cc890f_complete.js"

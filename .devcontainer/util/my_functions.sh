@@ -1,387 +1,307 @@
 #!/bin/bash
-# ======================================================================
-#   DTWiz 101 - Custom lab functions ("spells")
-# ----------------------------------------------------------------------
-#   Sourced into every terminal session, so functions must `return`,
-#   never `exit`. This lab teaches the dtwiz CLI (dynatrace-oss/dtwiz):
-#   install it, analyze the environment, deploy the schnitzel demo app,
-#   and read dtwiz's recommendations. Each section has a solution spell
-#   plus a bounded verify helper so the LAB_SOLUTION runner can solve and
-#   check a step without racing asynchronous work.
-# ======================================================================
+# Functions for the training "dtwiz 101".
+# Sourced on top of the framework in every shell, check, setup and solution:
+# use return, never exit. Every function is idempotent.
+#
+# Check pattern: a check probes once and answers immediately when the learner clicks.
+# When automation sets LAB_WAIT=1 (nightly training-test, resume, solution verify), the
+# checks that wait on the cluster or on Grail retry, so they never race asynchronous work.
+#
+# Placeholders such as DT_SESSION_ID do not resolve in shell: the learner's session id is
+# read from $DT_HOSTGROUP.
 
-# --- Sample helper kept from the template (used by the getting-started check).
-customFunction(){
-  printInfoSection "The wizard warms up with a trivial incantation"
-  printInfo "1 + 1 = $(( 1 + 1 ))"
+# Where the learner keeps what dtwiz writes: the inventory, the recommendations and the
+# install log. One directory, so every check reads a file the learner produced.
+DTWIZ_WORKDIR="${DTWIZ_WORKDIR:-$HOME/dtwiz}"
+
+# ----------------------------------------------------------------------------------------
+# Cluster identity
+# ----------------------------------------------------------------------------------------
+# dtwiz names the DynaKube after the kubeconfig cluster ("k3d-<k3d cluster name>"), and the
+# Dynatrace Operator reports the cluster to the tenant under that name. Every learner shares
+# one tenant, so the name must be unique per learner, and dtwiz cuts it to 23 characters.
+# The k3d name must also contain "enablement": the framework's startK3dCluster finds an
+# existing cluster by that word. "enablement-" + 8 hex characters of the session id hash
+# gives "k3d-enablement-1a2b3c4d", 23 characters exactly.
+dtwizK3dName() {
+  local sid="${DT_HOSTGROUP:-}"
+  [ -z "$sid" ] && sid="local-$(hostname 2>/dev/null)"
+  printf 'enablement-%s\n' "$(printf '%s' "$sid" | sha256sum | cut -c1-8)"
 }
 
-DTWIZ_INSTALL_URL="https://raw.githubusercontent.com/dynatrace-oss/dtwiz/main/scripts/install.sh"
-
-# ----------------------------------------------------------------------
-# Shell-history verification — confirm the learner actually TYPED a command
-# ----------------------------------------------------------------------
-# The training gates progression on the learner running real dtwiz commands
-# themselves (not just clicking a solve button). These helpers grep the shell
-# history for a pattern so a check button can confirm "you ran `dtwiz status`".
-# Works for zsh (default here) and bash; the framework opens a login zsh.
-ranCommand(){
-  local pattern="$1"
-  local hist
-  for hist in "$HOME/.zsh_history" "$HISTFILE" "$HOME/.bash_history"; do
-    [ -n "$hist" ] && [ -f "$hist" ] || continue
-    # zsh history lines are ": <ts>:0;<cmd>" — grep the command part.
-    if grep -aE "${pattern}" "$hist" >/dev/null 2>&1; then
-      return 0
-    fi
-  done
-  return 1
+# The name dtwiz gives the DynaKube, and the Kubernetes cluster name in Dynatrace.
+dtwizClusterName() {
+  printf 'k3d-%s\n' "$(dtwizK3dName)"
 }
 
-# Named checks the LAB_QUESTIONs call. Each passes if the learner ran the
-# command in their terminal (history), so they progress on their own doing.
-verifyRanInstall(){ ranCommand "dtwiz .*(version|install\.sh)|install\.sh" \
-  && { printInfo "✅ You installed dtwiz"; return 0; } \
-  || { printError "Run the dtwiz install one-liner in the Terminal first"; return 1; }; }
-verifyRanStatus(){ ranCommand "dtwiz +status" \
-  && { printInfo "✅ You ran 'dtwiz status'"; return 0; } \
-  || { printError "Run 'dtwiz status' in the Terminal first"; return 1; }; }
-verifyRanAnalyze(){ ranCommand "dtwiz +analyze" \
-  && { printInfo "✅ You ran 'dtwiz analyze'"; return 0; } \
-  || { printError "Run 'dtwiz analyze' in the Terminal first"; return 1; }; }
-verifyRanRecommend(){ ranCommand "dtwiz +recommend" \
-  && { printInfo "✅ You ran 'dtwiz recommend'"; return 0; } \
-  || { printError "Run 'dtwiz recommend' in the Terminal first"; return 1; }; }
-verifyRanDemo(){ ranCommand "dtwiz +install +demo" \
-  && { printInfo "✅ You deployed the schnitzel demo"; return 0; } \
-  || { printError "Run 'dtwiz install demo --experimental --yes' first"; return 1; }; }
-
-# Make dtwiz visible in non-interactive shells too: the installer may land in
-# ~/bin, which login shells add to PATH but plain `zsh -c` does not.
-_dtwizPath(){
-  command -v dtwiz >/dev/null 2>&1 && return 0
-  [ -x "$HOME/bin/dtwiz" ] && export PATH="$HOME/bin:$PATH" && return 0
-  [ -x /usr/local/bin/dtwiz ] && return 0
-  return 1
+# ----------------------------------------------------------------------------------------
+# Environment (built by post-create)
+# ----------------------------------------------------------------------------------------
+# post-create.sh: start the k3d cluster under this learner's name before the learner arrives.
+startDtwizCluster() {
+  export K3D_CLUSTER_NAME
+  K3D_CLUSTER_NAME="$(dtwizK3dName)"
+  startCluster
 }
 
-# ----------------------------------------------------------------------
-# Section 01 - Install the dtwiz CLI
-# ----------------------------------------------------------------------
-installDtwiz(){
-  printInfoSection "Summoning the dtwiz CLI (dynatrace-oss/dtwiz)"
-  if _dtwizPath; then
-    printInfo "dtwiz already installed: $(dtwiz version 2>/dev/null | head -1)"
-    return 0
+# checkClusterReady: the kubeconfig points at this learner's k3d cluster and its node is Ready.
+# This is what dtwiz reads in step 3.
+checkClusterReady() {
+  local expected ctx
+  expected="$(dtwizClusterName)"
+  ctx="$(kubectl config current-context 2>/dev/null)"
+  if [ "$ctx" != "$expected" ]; then
+    printError "kubectl context is '${ctx:-none}', expected '$expected' — the cluster is not attached"
+    return 1
   fi
-  curl -sSL "$DTWIZ_INSTALL_URL" | sh
-  _dtwizPath || { printError "dtwiz not found after install"; return 1; }
-  printInfo "dtwiz installed: $(dtwiz version 2>/dev/null | head -1)"
+  checkNodeReady
 }
 
-isDtwizInstalled(){
-  _dtwizPath || { printError "dtwiz is not installed - run installDtwiz (or the install one-liner)"; return 1; }
-  dtwiz version
+# ----------------------------------------------------------------------------------------
+# Step 2: install dtwiz and connect it to the tenant
+# ----------------------------------------------------------------------------------------
+# The installer puts dtwiz in /usr/local/bin, or in ~/bin without sudo. A check runs in a
+# fresh non-interactive shell, so put ~/bin on PATH before looking.
+_dtwizOnPath() {
+  case ":$PATH:" in
+    *":$HOME/bin:"*) ;;
+    *) export PATH="$HOME/bin:$PATH" ;;
+  esac
+  command -v dtwiz >/dev/null 2>&1
 }
 
-# ----------------------------------------------------------------------
-# Section 02 - Connect & analyze  (platform-token-native)
-# ----------------------------------------------------------------------
-# The lab injects BOTH the tenant URL and a PLATFORM token automatically:
-#   DT_ENVIRONMENT      - your tenant URL (dtwiz reads it from the environment)
-#   DT_PLATFORM_TOKEN   - a platform token (dt0s16); dtwiz reads it from the
-#                         environment too, so `dtwiz status/analyze/recommend/
-#                         watch/install` all just work with NO --access-token.
-# This is the platform-token-native path Dynatrace is standardizing on
-# (classic dt0c01 tokens are being deprecated). Nothing to export by hand.
-dtwizConnect(){
-  isDtwizInstalled >/dev/null || return 1
-  printInfoSection "Checking the connection to $DT_ENVIRONMENT"
-  dtwiz status
-}
-
-analyzeSystem(){
-  isDtwizInstalled >/dev/null || return 1
-  printInfoSection "dtwiz gazes upon the system (dtwiz analyze)"
-  dtwiz analyze
-}
-
-# The analyze output must at least detect the container's Docker runtime.
-isAnalyzeWorking(){
-  isDtwizInstalled >/dev/null || return 1
-  dtwiz analyze 2>&1 | grep -qi "docker" \
-    && { printInfo "dtwiz analyze detects the environment"; return 0; } \
-    || { printError "dtwiz analyze did not report the environment"; return 1; }
-}
-
-# ----------------------------------------------------------------------
-# Section 04 - Deploy the schnitzel demo app (platform-token tier)
-# ----------------------------------------------------------------------
-# `dtwiz install demo` and `dtwiz watch` use the Dynatrace platform APIs, so
-# they require a platform token (dt0s16) in DT_PLATFORM_TOKEN. The lab only
-# injects a Classic access token - the demo tier is skipped cleanly when the
-# platform token is absent so the training stays completable everywhere.
-# ----------------------------------------------------------------------
-# dtwiz install kubernetes — deploy the Operator, then make it k3d-clean
-# ----------------------------------------------------------------------
-# `dtwiz install kubernetes` deploys the Dynatrace Operator + a DynaKube with
-# KSPM (Kubernetes Security Posture Management) enabled by default. KSPM's
-# node-config-collector DaemonSet needs REAL node host access (it mounts the
-# host filesystem to run CIS/security benchmarks) — impossible on k3d, whose
-# "nodes" are containers — so that one pod sits in ContainerCreating forever
-# and dtwiz's own wait eventually times out even though the operator is up.
-# On k3d we simply remove KSPM: it isn't what this training teaches, and it
-# can't work here. Everything else (operator, ActiveGate, OTel collector,
-# code injection) stays fully functional.
-installDtwizKubernetes(){
-  isDtwizInstalled >/dev/null || return 1
-  printInfoSection "Deploying the Dynatrace Operator (dtwiz install kubernetes)"
-  dtwiz install kubernetes --yes < /dev/null
-  patchDynakubeDisableKspm
-}
-
-# Remove the kspm block from every DynaKube so the operator drops the stuck
-# node-config-collector DaemonSet. Idempotent; safe to run more than once.
-patchDynakubeDisableKspm(){
-  command -v kubectl >/dev/null 2>&1 || { printWarn "kubectl not found — skipping KSPM patch"; return 0; }
-  local dk patched=0
-  for dk in $(kubectl -n dynatrace get dynakube -o name 2>/dev/null); do
-    if kubectl -n dynatrace get "$dk" -o jsonpath='{.spec.kspm}' 2>/dev/null | grep -q .; then
-      kubectl -n dynatrace patch "$dk" --type=json \
-        -p='[{"op":"remove","path":"/spec/kspm"}]' >/dev/null 2>&1 && patched=1
-      printInfo "KSPM removed from $dk (not supported on k3d container nodes)"
-    fi
-  done
-  if [ "$patched" = "1" ]; then
-    # Give the operator a moment to reconcile the DaemonSet away.
-    local i=0
-    while [ "$i" -lt 12 ]; do
-      kubectl -n dynatrace get pods --no-headers 2>/dev/null | grep -q node-config || {
-        printInfo "✅ node-config-collector removed — cluster is k3d-clean"; return 0; }
-      i=$((i + 1)); sleep 5
-    done
-    printInfo "KSPM patched; collector teardown still in progress (harmless)"
-  else
-    printInfo "No KSPM block present — nothing to patch"
+# checkDtwizInstalled: dtwiz is on PATH and answers `dtwiz version`. post-create does not
+# install it, so this fails until the learner runs the installer.
+checkDtwizInstalled() {
+  if ! _dtwizOnPath; then
+    printError "dtwiz is not installed — run the install one-liner, then check again"
+    return 1
   fi
+  if ! dtwiz version >/dev/null 2>&1; then
+    printError "dtwiz is on PATH but 'dtwiz version' fails"
+    return 1
+  fi
+  printInfo "dtwiz is installed: $(dtwiz version 2>/dev/null | head -1)"
   return 0
 }
 
-isKspmDisabled(){
-  command -v kubectl >/dev/null 2>&1 || { printInfo "kubectl not present — check skipped"; return 0; }
-  # No dynakube at all (e.g. demo-only path) → nothing to assert.
-  kubectl -n dynatrace get dynakube -o name >/dev/null 2>&1 || { printInfo "No DynaKube — step not applicable"; return 0; }
-  if kubectl -n dynatrace get pods --no-headers 2>/dev/null | grep -q node-config; then
-    printError "node-config-collector still present — run patchDynakubeDisableKspm"; return 1
+# checkDtwizConnected: `dtwiz status` validates the platform token against the tenant.
+# dtwiz validates it with a DQL query (fetch dt.system.events | limit 1); a ✓ on the
+# Platform Token line means the tenant answered that query with this token.
+checkDtwizConnected() {
+  local out
+  checkDtwizInstalled >/dev/null 2>&1 || { printError "dtwiz is not installed yet"; return 1; }
+  if [ -z "${DT_ENVIRONMENT:-}" ]; then
+    printError "DT_ENVIRONMENT is not set"; return 1
   fi
-  printInfo "✅ No stuck node-config-collector — KSPM cleanly disabled"; return 0
-}
-
-# ----------------------------------------------------------------------
-# OpenTelemetry — verify the schnitzel spans landed in Grail
-# ----------------------------------------------------------------------
-# The schnitzel demo is instrumented with OpenTelemetry and ships OTLP spans
-# straight to the tenant — no OneAgent, no operator. In Dynatrace those spans
-# are first-class Grail records you query with DQL (`fetch spans`). This helper
-# proves the end-to-end OTel pipeline (app → OTLP → Grail) by querying the
-# tenant for recent schnitzel spans, using the injected platform token.
-# Per-user isolation id — same idea as the k8s cluster-name suffix. Orbital
-# injects DT_HOSTGROUP="<user>-<yyyymmdd>" per session; we prefix every schnitzel
-# service.name with it so 100 learners can run the demo against ONE tenant and
-# each filters Grail to ONLY their own spans. Falls back to a host-derived id
-# for local runs so the demo still works off-Orbital.
-_dtSessionId(){
-  local raw="${DT_HOSTGROUP:-}"
-  [ -z "$raw" ] && raw="local-$(hostname 2>/dev/null | tr '[:upper:]' '[:lower:]')"
-  echo "$raw" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9-]+/-/g; s/^-+//; s/-+$//'
-}
-
-# DQL: only THIS session's schnitzel spans (service.name is "<sid>-<svc>").
-otelTracesQuery(){
-  local sid; sid="$(_dtSessionId)"
-  printf 'fetch spans, from:now()-15m\n| filter startsWith(service.name, "%s-")\n| summarize spans = count()' "$sid"
-}
-
-# Run a DQL query against Grail and return the record count. The query:execute
-# API is ASYNC: the first POST usually returns {state:RUNNING, requestToken};
-# you then poll query:poll until state==SUCCEEDED. (A single POST that ignores
-# the token will always read zero — the classic gotcha.)
-_grailCount(){
-  local dql="$1" body resp state token i=0
-  body=$(printf '%s' "$dql" | python3 -c 'import json,sys; print(json.dumps({"query": sys.stdin.read()}))')
-  resp=$(curl -s -X POST "${DT_ENVIRONMENT%/}/platform/storage/query/v1/query:execute" \
-    -H "Authorization: Bearer $DT_PLATFORM_TOKEN" -H "Content-Type: application/json" -d "$body" 2>/dev/null)
-  state=$(printf '%s' "$resp" | python3 -c 'import json,sys;print(json.load(sys.stdin).get("state",""))' 2>/dev/null)
-  if [ "$state" = "SUCCEEDED" ]; then
-    printf '%s' "$resp" | python3 -c 'import json,sys;r=(json.load(sys.stdin).get("result") or {}).get("records",[]);print(r[0].get("spans",len(r)) if r else 0)' 2>/dev/null; return 0
-  fi
-  token=$(printf '%s' "$resp" | python3 -c 'import json,sys;print(json.load(sys.stdin).get("requestToken",""))' 2>/dev/null)
-  [ -n "$token" ] || { echo 0; return 0; }
-  while [ "$i" -lt 15 ]; do
-    resp=$(curl -s -G "${DT_ENVIRONMENT%/}/platform/storage/query/v1/query:poll" \
-      -H "Authorization: Bearer $DT_PLATFORM_TOKEN" --data-urlencode "request-token=$token" 2>/dev/null)
-    state=$(printf '%s' "$resp" | python3 -c 'import json,sys;print(json.load(sys.stdin).get("state",""))' 2>/dev/null)
-    if [ "$state" = "SUCCEEDED" ]; then
-      printf '%s' "$resp" | python3 -c 'import json,sys;r=(json.load(sys.stdin).get("result") or {}).get("records",[]);print(r[0].get("spans",len(r)) if r else 0)' 2>/dev/null; return 0
-    fi
-    i=$((i + 1)); sleep 2
-  done
-  echo 0
-}
-
-verifyOtelTracesInGrail(){
   if [ -z "${DT_PLATFORM_TOKEN:-}" ]; then
-    printInfo "No DT_PLATFORM_TOKEN — OTel-trace check skipped (OK)."; return 0
+    printError "DT_PLATFORM_TOKEN is not set — the environment was provisioned without a platform token"
+    return 1
   fi
-  printInfoSection "Querying Grail for schnitzel OpenTelemetry spans"
-  # Learner click: one Grail query, instant answer. LAB_WAIT=1 (solution runner,
-  # lab-driver, validator): retry — OTLP ingest legitimately lags ~1-2 min.
-  local count attempts=1 i=1
-  [ -n "${LAB_WAIT:-}" ] && attempts=12
+  out="$(dtwiz status 2>&1)"
+  if printf '%s\n' "$out" | grep -E 'Platform Token:' | grep -q '✓'; then
+    printInfo "dtwiz authenticated to $DT_ENVIRONMENT with the platform token"
+    return 0
+  fi
+  printError "dtwiz status did not validate the platform token:"
+  printf '%s\n' "$out" | grep -E 'Environment:|Platform Token:'
+  return 1
+}
+
+# ----------------------------------------------------------------------------------------
+# Step 3: analyze
+# ----------------------------------------------------------------------------------------
+# checkDtwizAnalysis: the learner saved `dtwiz analyze --json` to analysis.json, and the
+# inventory reports this learner's k3d cluster: Kubernetes available, the k3s distribution,
+# and the cluster name dtwiz will give the DynaKube.
+checkDtwizAnalysis() {
+  local file="$DTWIZ_WORKDIR/analysis.json"
+  [ -s "$file" ] || { printError "$file not found — save the inventory with dtwiz analyze --json"; return 1; }
+  if jq -e --arg c "$(dtwizClusterName)" \
+      '.orchestrator == "kubernetes" and .kubernetes.available == true and .kubernetes.cluster == $c' \
+      "$file" >/dev/null 2>&1; then
+    printInfo "The inventory reports Kubernetes: $(jq -r '.kubernetes.distribution + ", cluster " + .kubernetes.cluster' "$file")"
+    return 0
+  fi
+  printError "The inventory in $file does not report the cluster $(dtwizClusterName):"
+  jq -c '{orchestrator, kubernetes}' "$file" 2>/dev/null
+  return 1
+}
+
+# ----------------------------------------------------------------------------------------
+# Step 4: recommend
+# ----------------------------------------------------------------------------------------
+# checkDtwizRecommendation: the learner saved `dtwiz recommend --json`, and the list
+# contains the Kubernetes method that names this cluster.
+checkDtwizRecommendation() {
+  local file="$DTWIZ_WORKDIR/recommendations.json"
+  [ -s "$file" ] || { printError "$file not found — save the recommendations with dtwiz recommend --json"; return 1; }
+  if jq -e --arg c "$(dtwizClusterName)" \
+      'any(.[]; .method == "kubernetes" and ((.detection_info // "") | contains($c)))' \
+      "$file" >/dev/null 2>&1; then
+    printInfo "dtwiz recommends: $(jq -r '[.[] | .method] | join(", ")' "$file")"
+    return 0
+  fi
+  printError "No Kubernetes recommendation for $(dtwizClusterName) in $file. Methods found:"
+  jq -r '[.[] | .method] | join(", ")' "$file" 2>/dev/null
+  return 1
+}
+
+# ----------------------------------------------------------------------------------------
+# Step 5: deploy the Dynatrace Operator
+# ----------------------------------------------------------------------------------------
+# checkDynakubeApplied: dtwiz applied its DynaKube for this cluster. Fails before the install.
+checkDynakubeApplied() {
+  local dk i=0
+  dk="$(dtwizClusterName)"
+  if [ -n "${LAB_WAIT:-}" ]; then
+    while [ "$i" -lt 36 ]; do
+      kubectl -n dynatrace get dynakube "$dk" >/dev/null 2>&1 && break
+      i=$((i + 1)); printInfo "DynaKube $dk not applied yet ($i/36), waiting 10s"; sleep 10
+    done
+  fi
+  if kubectl -n dynatrace get dynakube "$dk" >/dev/null 2>&1; then
+    printInfo "DynaKube $dk is applied"
+    return 0
+  fi
+  printError "No DynaKube $dk in namespace dynatrace — run dtwiz install kubernetes, then check again"
+  return 1
+}
+
+# ----------------------------------------------------------------------------------------
+# Step 6: troubleshoot
+# ----------------------------------------------------------------------------------------
+# checkKspmRemoved: the DynaKube no longer requests KSPM, and no node-config-collector pod is
+# left. Fails while the DynaKube still carries spec.kspm, and fails without a DynaKube.
+checkKspmRemoved() {
+  local dk
+  dk="$(dtwizClusterName)"
+  if ! kubectl -n dynatrace get dynakube "$dk" >/dev/null 2>&1; then
+    printError "No DynaKube $dk — deploy the operator first (step 5)"; return 1
+  fi
+  if [ -n "$(kubectl -n dynatrace get dynakube "$dk" -o jsonpath='{.spec.kspm}' 2>/dev/null)" ]; then
+    printError "DynaKube $dk still requests KSPM (spec.kspm) — remove it, then check again"; return 1
+  fi
+  if kubectl -n dynatrace get pods --no-headers 2>/dev/null | grep -q node-config-collector; then
+    if [ -n "${LAB_WAIT:-}" ]; then
+      local i=0
+      while [ "$i" -lt 18 ] && kubectl -n dynatrace get pods --no-headers 2>/dev/null | grep -q node-config-collector; do
+        i=$((i + 1)); printInfo "node-config-collector still terminating ($i/18), waiting 10s"; sleep 10
+      done
+    fi
+    if kubectl -n dynatrace get pods --no-headers 2>/dev/null | grep -q node-config-collector; then
+      printError "spec.kspm is gone but a node-config-collector pod is still there — wait a moment, then check again"; return 1
+    fi
+  fi
+  printInfo "KSPM removed from $dk; no node-config-collector pod left"
+  return 0
+}
+
+# checkDynatracePodsReady: the condition `dtwiz install kubernetes` waits for — every pod in
+# namespace dynatrace Ready, and at least one ActiveGate pod among them. Checked on the cluster,
+# not in the install log: dtwiz stops waiting after 10 minutes, the cluster does not.
+checkDynatracePodsReady() {
+  local i=0 tries=1 total notready ag
+  [ -n "${LAB_WAIT:-}" ] && tries=60
   while :; do
-    count=$(_grailCount "$(otelTracesQuery)")
-    if [ "${count:-0}" -gt 0 ] 2>/dev/null; then
-      printInfo "✅ $count schnitzel OpenTelemetry span(s) in Grail — the OTLP pipeline works end-to-end"; return 0
+    total="$(kubectl -n dynatrace get pods --no-headers 2>/dev/null | grep -vc Completed)"
+    notready="$(kubectl -n dynatrace get pods --no-headers 2>/dev/null | grep -v Completed \
+      | awk '{split($2,a,"/"); if (a[1]!=a[2] || a[1]==0) n++} END {print n+0}')"
+    ag="$(kubectl -n dynatrace get pods --no-headers 2>/dev/null | grep -i activegate \
+      | awk '{split($2,a,"/"); if (a[1]==a[2] && a[1]>0) n++} END {print n+0}')"
+    if [ "$total" -gt 0 ] && [ "$notready" -eq 0 ] && [ "$ag" -gt 0 ]; then
+      printInfo "All $total Dynatrace pods are Ready, ActiveGate included"
+      return 0
     fi
-    [ "$i" -ge "$attempts" ] && break
-    i=$((i + 1)); printInfo "spans not in Grail yet ($i/$attempts) — OTLP ingest takes a minute, waiting 15s"; sleep 15
+    i=$((i + 1))
+    [ "$i" -ge "$tries" ] && break
+    printInfo "$notready of $total Dynatrace pods not Ready yet ($i/$tries), waiting 10s"; sleep 10
   done
-  printWarn "No schnitzel spans in Grail yet — OTLP ingest takes a minute or two after the demo starts. Make sure the demo is running (isDemoRunning), then check again."
+  printError "$notready of $total Dynatrace pods are not Ready (ActiveGate Ready: $ag):"
+  kubectl -n dynatrace get pods --no-headers 2>/dev/null | grep -v Completed \
+    | awk '{split($2,a,"/"); if (a[1]!=a[2] || a[1]==0) print "  " $1 " " $2 " " $3}'
   return 1
 }
 
-deployDtwizDemo(){
-  isDtwizInstalled >/dev/null || return 1
-  if [ -z "${DT_PLATFORM_TOKEN:-}" ]; then
-    printWarn "DT_PLATFORM_TOKEN is not set - the demo installer needs a platform token (dt0s16)."
-    printInfo "This lab injects one automatically; if it is missing, tell your instructor."
-    return 0
-  fi
-  printInfoSection "Deploying the schnitzel demo app (dtwiz install demo)"
-  # dtwiz extracts the demo under $TMPDIR and rename()s it into the current
-  # directory - in Codespaces /tmp and /workspaces are different mounts, so the
-  # rename fails with "invalid cross-device link" unless TMPDIR shares the
-  # workspace mount. stdin from /dev/null skips the interactive watch screen.
-  mkdir -p "${REPO_PATH:-.}/.dtwiz-tmp"
-  TMPDIR="${REPO_PATH:-.}/.dtwiz-tmp" dtwiz install demo --experimental --yes < /dev/null
-
-  # dtwiz extracts + OTel-instruments the app and starts a local OTel collector,
-  # but it does NOT keep the four schnitzel services running (they exit with the
-  # installer). Start them in the background so orders keep flowing and OTLP
-  # spans keep arriving in Grail — this is the "app → OTLP → Dynatrace" pipeline
-  # the training demonstrates. Auto-instrument with opentelemetry-instrument when
-  # present (dtwiz installs it); fall back to plain python if not.
-  startSchnitzel
+# ----------------------------------------------------------------------------------------
+# Step 7: analyze the monitored system in Dynatrace (dtctl, configured by the framework)
+# ----------------------------------------------------------------------------------------
+# Number of probes: 1 for a learner's click, 30 x 10 s when LAB_WAIT is set.
+_dtwizProbeCount() {
+  if [ -n "${LAB_WAIT:-}" ]; then echo 30; else echo 1; fi
 }
 
-# Start the four schnitzel services (order, delivery, frontend, loadgenerator)
-# in the background with OpenTelemetry auto-instrumentation. Idempotent.
-startSchnitzel(){
-  local dir="${REPO_PATH:-.}/schnitzel"
-  [ -d "$dir" ] || { printWarn "schnitzel/ not found — run 'dtwiz install demo' first"; return 1; }
-  if pgrep -f "schnitzel/(order|delivery|frontend|loadgenerator)/app.py" >/dev/null 2>&1; then
-    printInfo "schnitzel services already running"; return 0
-  fi
-  printInfoSection "Starting the schnitzel services (OTel-instrumented)"
-  # The image ships python3 (not always a bare `python`); pick whatever exists.
-  local py; py="$(command -v python3 || command -v python)"
-  [ -n "$py" ] || { printError "no python interpreter found"; return 1; }
-  # Install the app deps + the OpenTelemetry auto-instrumentation toolchain
-  # (pip may need --break-system-packages on a PEP-668 externally-managed image).
-  local pipflags="--quiet"
-  "$py" -m pip install $pipflags flask >/dev/null 2>&1 \
-    || pipflags="--quiet --break-system-packages"
-  "$py" -m pip install $pipflags -r "$dir/requirements.txt" \
-    opentelemetry-distro opentelemetry-exporter-otlp >/dev/null 2>&1
-  "$py" -m opentelemetry.instrumentation.bootstrap -a install >/dev/null 2>&1 \
-    || opentelemetry-bootstrap -a install >/dev/null 2>&1 || true
-  # pip may drop the OTel console scripts in ~/.local/bin — ensure it's on PATH.
-  export PATH="$HOME/.local/bin:$PATH"
-  # dtwiz points the app at its local collector via OTEL_* env; default to the
-  # standard local OTLP endpoint if dtwiz didn't export one into this shell.
-  : "${OTEL_EXPORTER_OTLP_ENDPOINT:=http://localhost:4318}"
-  export OTEL_EXPORTER_OTLP_ENDPOINT OTEL_TRACES_EXPORTER=otlp OTEL_METRICS_EXPORTER=otlp OTEL_LOGS_EXPORTER=otlp
-  local runner="$py"
-  command -v opentelemetry-instrument >/dev/null 2>&1 && runner="opentelemetry-instrument $py"
-  # Per-user isolation: name each service "<session-id>-<svc>" so every learner's
-  # spans are distinct in a shared tenant (mirrors the k8s cluster-name suffix).
-  local sid; sid="$(_dtSessionId)"
-  printInfo "Isolating this session's telemetry as service.name '$sid-*'"
-  local svc
-  for svc in order delivery frontend loadgenerator; do
-    [ -f "$dir/$svc/app.py" ] || continue
-    ( cd "$dir/$svc" && OTEL_SERVICE_NAME="$sid-$svc" nohup $runner app.py \
-        >"/tmp/schnitzel-$svc.log" 2>&1 & )
-    sleep 1
+# _dtwizDtctlAssert <description> <dql>
+# The query must keep a row only when the assertion holds and add
+# verdict = concat("ASSERT", "_PASS"). The marker is built inside DQL, so it appears in the
+# output only when a row came back, never because dtctl echoed the query in an error.
+_dtwizDtctlAssert() {
+  local description="$1" dql="$2" tries out i=1
+  command -v dtctl >/dev/null 2>&1 || { printError "dtctl is not installed"; return 1; }
+  tries=$(_dtwizProbeCount)
+  while [ "$i" -le "$tries" ]; do
+    if out=$(dtctl query "$dql" 2>&1) && printf '%s' "$out" | grep -q "ASSERT_PASS"; then
+      printInfo "PASS: $description"
+      return 0
+    fi
+    [ "$i" -lt "$tries" ] && sleep 10
+    i=$((i + 1))
   done
-  sleep 4
-  printInfo "schnitzel services launched (logs in /tmp/schnitzel-*.log)"
+  printError "FAIL: $description"
+  [ -n "${out:-}" ] && printf '%s\n' "$out" | tail -5
+  return 1
 }
 
-# Demo up? Check the actual service processes (not a name that never matches).
-waitForDemoRunning(){
-  printInfoSection "Waiting for the schnitzel demo services"
+# checkClusterInDynatrace [cluster]: the tenant knows a Kubernetes cluster of that name
+# (default: this learner's). The operator registers it through the ActiveGate.
+checkClusterInDynatrace() {
+  local c="${1:-$(dtwizClusterName)}"
+  _dtwizDtctlAssert "Kubernetes cluster $c is in Dynatrace" \
+    "smartscapeNodes K8S_CLUSTER | filter name == \"$c\" | limit 1 | fieldsAdd verdict = concat(\"ASSERT\", \"_PASS\")"
+}
+
+# checkClusterLogs [cluster]: container logs of that cluster reached Grail in the last
+# 15 minutes (the DynaKube's logMonitoring module).
+checkClusterLogs() {
+  local c="${1:-$(dtwizClusterName)}"
+  _dtwizDtctlAssert "logs of cluster $c are in Grail" \
+    "fetch logs, from:now()-15m | filter k8s.cluster.name == \"$c\" | limit 1 | fieldsAdd verdict = concat(\"ASSERT\", \"_PASS\")"
+}
+
+# ----------------------------------------------------------------------------------------
+# Step 8: remove what dtwiz installed
+# ----------------------------------------------------------------------------------------
+# checkOperatorRemoved: no DynaKube and no operator pod left. Fails while the operator runs.
+checkOperatorRemoved() {
   local i=0
-  while [ "$i" -lt 24 ]; do
-    if pgrep -f "schnitzel/(order|delivery|frontend|loadgenerator)/app.py" >/dev/null 2>&1; then
-      printInfo "schnitzel services are running"; return 0
-    fi
-    i=$((i + 1)); printInfo "services not up yet ($i/24), waiting 5s"; sleep 5
-  done
-  printError "schnitzel services not found in time"; return 1
-}
-
-isDemoRunning(){
-  # Deployment proof = the schnitzel/ dir exists AND its services are running.
-  if [ -d "${REPO_PATH:-.}/schnitzel" ] \
-     && pgrep -f "schnitzel/(order|delivery|frontend|loadgenerator)/app.py" >/dev/null 2>&1; then
-    printInfo "schnitzel demo is running"; return 0
+  # An unreachable cluster also lists no DynaKube: without this the check passes vacuously.
+  if ! kubectl get nodes >/dev/null 2>&1; then
+    printError "The cluster is not reachable — cannot tell whether the Operator is removed"; return 1
   fi
-  printError "schnitzel demo is not running - run deployDtwizDemo (or startSchnitzel)"; return 1
-}
-
-# Section-04 check: the schnitzel demo was DEPLOYED (dtwiz extracted the app +
-# set up OpenTelemetry). Deployment proof = the schnitzel/ directory exists;
-# the services running and spans landing in Grail are the richer signal but
-# are best-effort (OTLP ingest lag, and a shared training tenant carries other
-# apps' spans too). Skips cleanly if no platform token is available.
-verifyDemoOrSkip(){
-  if [ -z "${DT_PLATFORM_TOKEN:-}" ]; then
-    printInfo "No DT_PLATFORM_TOKEN in this environment - demo tier skipped (OK)."
-    return 0
+  if [ -n "${LAB_WAIT:-}" ]; then
+    while [ "$i" -lt 18 ]; do
+      kubectl -n dynatrace get dynakube --no-headers 2>/dev/null | grep -q . || \
+        kubectl -n dynatrace get pods --no-headers 2>/dev/null | grep -q operator || break
+      i=$((i + 1)); printInfo "operator still being removed ($i/18), waiting 10s"; sleep 10
+    done
   fi
-  if [ -d "${REPO_PATH:-.}/schnitzel" ]; then
-    printInfo "✅ schnitzel demo deployed (dtwiz install demo extracted + instrumented it)"
-    isDemoRunning >/dev/null 2>&1 && printInfo "   …and its services are running"
-    return 0
+  if kubectl -n dynatrace get dynakube --no-headers 2>/dev/null | grep -q .; then
+    printError "A DynaKube is still applied — run dtwiz uninstall kubernetes, then check again"; return 1
   fi
-  printError "schnitzel/ not found - run deployDtwizDemo (dtwiz install demo)"
-  return 1
+  if kubectl -n dynatrace get pods --no-headers 2>/dev/null | grep -q operator; then
+    printError "The Dynatrace Operator is still running"; return 1
+  fi
+  printInfo "The Dynatrace Operator and its DynaKubes are removed"
+  return 0
 }
 
-# ----------------------------------------------------------------------
-# Section 04 - Recommend, watch & status
-# ----------------------------------------------------------------------
-dtwizRecommend(){
-  isDtwizInstalled >/dev/null || return 1
-  printInfoSection "Asking the wizard for advice (dtwiz recommend)"
-  dtwiz recommend
-}
-
-isRecommendWorking(){
-  isDtwizInstalled >/dev/null || return 1
-  dtwiz recommend 2>&1 | grep -qi "recommend" \
-    && { printInfo "dtwiz recommend produced recommendations"; return 0; } \
-    || { printError "dtwiz recommend produced no output"; return 1; }
-}
-
-# ----------------------------------------------------------------------
-# Cleanup
-# ----------------------------------------------------------------------
-removeDtwizDemo(){
-  isDtwizInstalled >/dev/null || return 1
-  printInfoSection "Uninstalling the schnitzel demo app"
-  dtwiz uninstall demo --experimental --yes 2>/dev/null || true
-  pkill -f "schnitzel" 2>/dev/null || true
-  printInfo "Demo removed"
+# ----------------------------------------------------------------------------------------
+# Output hygiene
+# ----------------------------------------------------------------------------------------
+# redactTokens: filter for dtwiz output. `dtwiz install kubernetes` prints the manifest it
+# applies, and the Secret in it holds the platform token as apiToken and dataIngestToken.
+# Replaces both values, and any other dt0s16/dt0c01 token, before the output is shown or saved.
+redactTokens() {
+  sed -E -e 's/((apiToken|dataIngestToken):[[:space:]]*).*/\1<redacted>/' \
+         -e 's/dt0(s16|c01|s01|g02)\.[A-Za-z0-9._-]+/dt0\1.<redacted>/g'
 }

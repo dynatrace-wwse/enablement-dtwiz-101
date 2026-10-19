@@ -1,0 +1,237 @@
+{
+  "templateVersion": "1.0.0",
+  "id": "dtwiz-101",
+  "category": "CO",
+  "title": "dtwiz 101 — Assessment",
+  "description": "Check that you can set up dtwiz, read its analysis, deploy the Dynatrace Operator with it and troubleshoot what fails.",
+  "difficulty": "beginner",
+  "estimatedTime": 5,
+  "imagine": "A customer asks you to get their Kubernetes cluster into Dynatrace with dtwiz, today.",
+  "yourGoal": "Answer five questions about authentication, detection, the install and troubleshooting.",
+  "tools": [
+    {
+      "label": "dtwiz"
+    },
+    {
+      "label": "kubectl"
+    },
+    {
+      "label": "dtctl"
+    },
+    {
+      "label": "Dynatrace"
+    }
+  ],
+  "story": {
+    "introduction": "dtwiz analyzes a system and installs the Dynatrace ingestion method that fits it.",
+    "context": "Every answer is in the eight steps you just completed."
+  },
+  "questions": [
+    {
+      "id": "q1-token-validation",
+      "type": "multiple-choice",
+      "title": "What does dtwiz status prove?",
+      "content": "dtwiz status shows ✓ valid on the Platform Token line.",
+      "options": [
+        {
+          "id": "a",
+          "text": "The tenant answered one DQL query made with the token",
+          "isCorrect": true,
+          "explanation": "Correct. dtwiz validates with fetch dt.system.events; other scopes are tested only by the calls that need them."
+        },
+        {
+          "id": "b",
+          "text": "The token has every scope dtwiz install needs",
+          "isCorrect": false,
+          "explanation": "No. Only the scope of the validation query is checked."
+        },
+        {
+          "id": "c",
+          "text": "The token is a dt0s16 string",
+          "isCorrect": false,
+          "explanation": "dtwiz calls the tenant; a format check alone would not print valid."
+        },
+        {
+          "id": "d",
+          "text": "The Operator can already use the token",
+          "isCorrect": false,
+          "explanation": "The Operator is not involved in status."
+        }
+      ],
+      "correctAnswer": "a",
+      "explanation": "dtwiz validates the token with one DQL query. A missing scope for a later call shows up only at that call.",
+      "points": 1000,
+      "hints": [
+        "Re-read step 2.",
+        "What query does dtwiz run?"
+      ]
+    },
+    {
+      "id": "q2-detection",
+      "type": "multiple-choice",
+      "title": "How does dtwiz find a Kubernetes cluster?",
+      "content": "dtwiz analyze reports Kubernetes: <none> on a machine that can reach two clusters.",
+      "options": [
+        {
+          "id": "a",
+          "text": "Through the current kubeconfig context only",
+          "isCorrect": true,
+          "explanation": "Correct. No current context, no Kubernetes."
+        },
+        {
+          "id": "b",
+          "text": "By scanning the network for API servers",
+          "isCorrect": false,
+          "explanation": "dtwiz does not scan."
+        },
+        {
+          "id": "c",
+          "text": "Through the tenant's Kubernetes entities",
+          "isCorrect": false,
+          "explanation": "analyze sends nothing to the tenant."
+        },
+        {
+          "id": "d",
+          "text": "Through running Docker containers",
+          "isCorrect": false,
+          "explanation": "Docker is reported separately."
+        }
+      ],
+      "correctAnswer": "a",
+      "explanation": "dtwiz reads the current kubeconfig context. Select the cluster with kubectl config use-context first.",
+      "points": 1000,
+      "hints": [
+        "Step 6, No cluster context."
+      ]
+    },
+    {
+      "id": "q3-token-in-secret",
+      "type": "multiple-choice",
+      "title": "Which credential does the Operator run on after dtwiz install kubernetes?",
+      "content": "You need to size the platform token for a customer's install.",
+      "options": [
+        {
+          "id": "a",
+          "text": "The same platform token, written into the DynaKube Secret as apiToken and dataIngestToken",
+          "isCorrect": true,
+          "explanation": "Correct. So its scopes must cover the Operator, ActiveGate and log module too."
+        },
+        {
+          "id": "b",
+          "text": "A separate operator token dtwiz mints",
+          "isCorrect": false,
+          "explanation": "dtwiz mints nothing."
+        },
+        {
+          "id": "c",
+          "text": "The cluster's service account",
+          "isCorrect": false,
+          "explanation": "That is how the Operator talks to Kubernetes, not to Dynatrace."
+        },
+        {
+          "id": "d",
+          "text": "A classic dt0c01 token",
+          "isCorrect": false,
+          "explanation": "Only if you pass --access-token explicitly."
+        }
+      ],
+      "correctAnswer": "a",
+      "explanation": "dtwiz writes its own platform token into the Secret twice.",
+      "points": 1000,
+      "hints": [
+        "Step 5."
+      ]
+    },
+    {
+      "id": "q4-kspm",
+      "type": "multiple-choice",
+      "title": "Why did one pod stay in ContainerCreating on k3d?",
+      "content": "dtwiz install kubernetes timed out with one pod not Ready.",
+      "options": [
+        {
+          "id": "a",
+          "text": "KSPM's node-config-collector mounts host paths that a k3d container node does not have",
+          "isCorrect": true,
+          "explanation": "Correct. Removing spec.kspm lets the Operator delete it."
+        },
+        {
+          "id": "b",
+          "text": "The platform token lacked an ingest scope",
+          "isCorrect": false,
+          "explanation": "A missing scope does not stop a volume mount."
+        },
+        {
+          "id": "c",
+          "text": "The ActiveGate image could not be pulled",
+          "isCorrect": false,
+          "explanation": "The event named a hostPath mount."
+        },
+        {
+          "id": "d",
+          "text": "dtwiz applied the DynaKube to the wrong namespace",
+          "isCorrect": false,
+          "explanation": "Every pod was in dynatrace."
+        }
+      ],
+      "correctAnswer": "a",
+      "explanation": "KSPM benchmarks the node's host file system. On k3d the node is a container, so the mount fails.",
+      "points": 1000,
+      "hints": [
+        "Step 6, FailedMount event."
+      ]
+    },
+    {
+      "id": "q5-negative-control",
+      "type": "multiple-choice",
+      "title": "Why run checkClusterInDynatrace against a cluster that does not exist?",
+      "content": "Your assertion passed on the first try.",
+      "options": [
+        {
+          "id": "a",
+          "text": "To prove the assertion can fail, so its pass really comes from your cluster",
+          "isCorrect": true,
+          "explanation": "Correct. A DQL filter that matches nothing is not an error."
+        },
+        {
+          "id": "b",
+          "text": "To clean up other learners' clusters",
+          "isCorrect": false,
+          "explanation": "The check only reads."
+        },
+        {
+          "id": "c",
+          "text": "To warm up the dtctl cache",
+          "isCorrect": false,
+          "explanation": "There is no such cache."
+        },
+        {
+          "id": "d",
+          "text": "Because dtctl needs two queries to authenticate",
+          "isCorrect": false,
+          "explanation": "It does not."
+        }
+      ],
+      "correctAnswer": "a",
+      "explanation": "An assertion never seen failing proves nothing. A filter matching nothing returns zero rows without error.",
+      "points": 1000,
+      "hints": [
+        "Step 7, negative control."
+      ]
+    }
+  ],
+  "maxScore": 5000,
+  "tags": [
+    "dtwiz",
+    "kubernetes",
+    "operator",
+    "platform-token",
+    "assessment"
+  ],
+  "learningObjectives": [
+    "Install dtwiz and validate a platform token",
+    "Explain how dtwiz detects Kubernetes",
+    "Size a platform token for dtwiz install kubernetes",
+    "Diagnose a pod that never becomes Ready",
+    "Prove data in a shared tenant with a negative control"
+  ]
+}
